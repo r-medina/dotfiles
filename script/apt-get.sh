@@ -1,3 +1,3 @@
-apt-get install -y \
-	emacs \
-	git
+sudo apt-get install -y \
+     emacs \
+     git
