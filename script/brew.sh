@@ -10,13 +10,13 @@ brew install \
      golangci-lint \
      highlight \
      htop \
+     python \
      ipython \
      ispell \
      python \
      source-highlight \
      tree \
-     wget \
-     zsh
+     wget
 
 brew cask install \
      1password-cli \
