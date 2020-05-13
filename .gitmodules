@@ -1,0 +1,9 @@
+[submodule "dotdrop"]
+	path = dotdrop
+	url = https://github.com/deadc0de6/dotdrop.git
+[submodule "oh-my-zsh-custom/plugins/zsh-autosuggestions"]
+	path = oh-my-zsh-custom/plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "oh-my-zsh-custom/plugins/zsh-completions"]
+	path = oh-my-zsh-custom/plugins/zsh-completions
+	url = git://github.com/zsh-users/zsh-completions.git

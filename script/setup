@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+case "$(uname -s)" in
+    # Darwin)       
+    # ;;
+    
+    Linux)
+	sudo apt-get -y install python3-venv zsh
+	;;
+esac
