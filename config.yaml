@@ -6,7 +6,24 @@ dotfiles:
   f_zshrc:
     src: zshrc
     dst: ~/.zshrc
+  d_oh-my-zsh-custom:
+    src: oh-my-zsh-custom
+    dst: ~/.oh-my-zsh/custom
+  d_emacs:
+    src: emacs.d
+    dst: ~/.emacs.d
+    link: link_children
+  f_gitconfig:
+    src: gitconfig
+    dst: ~/.gitconfig
+  f_gitignore_global:
+    src: gitignore_global
+    dst: ~/.gitignore_global
 profiles:
   home:
     dotfiles:
     - f_zshrc
+    - d_oh-my-zsh-custom
+    - d_emacs
+    - f_gitconfig
+    - f_gitignore_global
