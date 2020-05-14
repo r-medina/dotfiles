@@ -10,3 +10,6 @@
 [submodule "dotfiles/.emacs.d"]
 	path = dotfiles/.emacs.d
 	url = git://github.com/r-medina/.emacs.d.git
+[submodule "dotfiles/emacs.d"]
+	path = dotfiles/emacs.d
+	url = git@github.com:r-medina/.emacs.d
