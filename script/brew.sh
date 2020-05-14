@@ -2,6 +2,7 @@ brew install \
      awscli \
      bash \
      cmake \
+     coreutils \
      dep \
      gh \
      git \
