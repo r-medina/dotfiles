@@ -1,3 +1,5 @@
+whence go || exit 0
+
 # we're only really concerned with a few go environment variables
 govars=(
     GOPATH
