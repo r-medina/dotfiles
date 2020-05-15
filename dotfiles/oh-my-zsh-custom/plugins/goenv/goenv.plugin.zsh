@@ -1,4 +1,4 @@
-whence go || exit 0
+whence go || return
 
 # we're only really concerned with a few go environment variables
 govars=(
