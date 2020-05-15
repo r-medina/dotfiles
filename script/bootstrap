@@ -12,7 +12,7 @@ case "$(uname -s)" in
         ;;
 
     Linux)
-        sudo apt-get update
+        sudo apt-get update -y --allow-change-held-packages
         source ./script/apt-get.sh
         ;;
 esac
