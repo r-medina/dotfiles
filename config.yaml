@@ -8,7 +8,8 @@ dotfiles:
     dst: ~/.zshrc
   d_oh-my-zsh-custom:
     src: oh-my-zsh-custom
-    dst: ~/.oh-my-zsh/custom
+    dst: ~/.oh-my-zsh-custom
+    link: link_children
   d_emacs:
     src: emacs.d
     dst: ~/.emacs.d
