@@ -1,4 +1,4 @@
-whence go || return
+whence go > /dev/null || return
 
 # we're only really concerned with a few go environment variables
 govars=(
