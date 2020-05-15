@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 
-set -e
-set -x
+set -ex
+
+if ! command -v python3; then
+    echo "Python3 must be installed" >&2
+    exit 2
+fi
+
+python3 -m venv env
+source env/bin/activate
+pip install -r dotdrop/requirements.txt
+
+./dotdrop.sh install --profile=home
+
+deactivate
 
 case "$(uname -s)" in
     # Darwin)       
