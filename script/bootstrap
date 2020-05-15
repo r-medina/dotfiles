@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
 
 cd "$(dirname "$0")/.."
 
@@ -31,11 +30,15 @@ else
     exit 2
 fi
 
+# TODO
+./dotdrop.sh install --profile=home
+
 # Install oh-my-zsh
 if command -v curl; then
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 elif command -v wget; then
-    sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+    sh -c "$(wget -qO- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 else
-    abort "Either curl or wget must be installed"
+    echo "either curl or wget must be installed" >&2
+    exit 2
 fi

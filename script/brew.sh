@@ -17,7 +17,8 @@ brew install \
      python \
      source-highlight \
      tree \
-     wget
+     wget \
+     zsh
 
 brew cask install \
      1password-cli \

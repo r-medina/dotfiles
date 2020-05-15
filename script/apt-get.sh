@@ -1,3 +1,6 @@
 sudo apt-get install -y \
      emacs \
-     git
+     git \
+     python3 \
+     python3-venv \
+     zsh
