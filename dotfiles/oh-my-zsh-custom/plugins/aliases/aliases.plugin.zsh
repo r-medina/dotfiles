@@ -16,7 +16,8 @@ alias uncut='cut --complement'
 # colors
 alias tree='tree -C'
 
-alias emacs='te'
+# experimenting with emacs as separate program
+# alias emacs='te'
 
 # kill clients, kill daemon, let em know
 # needs `;` after first command because pkill returns 1 if no processes
