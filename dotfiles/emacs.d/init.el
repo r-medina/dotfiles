@@ -43,8 +43,11 @@
  '(custom-enabled-themes (quote (atom-dark)))
  '(custom-safe-themes
    (quote
-    ("0a8b8aad17f3bd4af1839a49cd97048c90db98a088b1f6f6d0d2187a3c35321d" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "319bf1bab5d05e3a4c4a165efe69d27b3d975759034074f15fe61e92c7304884" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+    ("9685cefcb4efd32520b899a34925c476e7920725c8d1f660e7336f37d6d95764" "0a8b8aad17f3bd4af1839a49cd97048c90db98a088b1f6f6d0d2187a3c35321d" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "319bf1bab5d05e3a4c4a165efe69d27b3d975759034074f15fe61e92c7304884" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(custom-theme-directory "~/.emacs.d/themes")
+ '(display-battery-mode t)
+ '(electric-pair-mode t)
+ '(global-hl-line-mode t)
  '(hscroll-margin 8)
  '(hscroll-step 1)
  '(org-roam-server-mode t)

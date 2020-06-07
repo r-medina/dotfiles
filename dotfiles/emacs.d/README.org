@@ -121,7 +121,7 @@ an attempt to get it documented and in one place.
       (use-package company
 	:hook (after-init . global-company-mode)
 	:config
-	(setq company-idle-delay 1)
+	(setq company-idle-delay .5)
 	;; starts completing after a single character instead of 3
 	(setq company-minimum-prefix-length 1)
 	;; aligns fields in completions
@@ -158,12 +158,24 @@ an attempt to get it documented and in one place.
 	:mode "\\.go\\'"
 	:hook
 	(go-mode . flycheck-mode)
-	(go-mode . lsp-deferred))
+	(go-mode . lsp-deferred)
+	(before-save . gofmt-before-save)
+	:config
+	(use-package flycheck-gometalinter
+	  :config
+	  (setq flycheck-gometalinter-fast t)
+	  (setq flycheck-gometalinter-tests t)
+	  (flycheck-gometalinter-setup))
+	(use-package go-guru
+	  :ensure t
+	  :hook
+	  (go-mode  . go-guru-hl-identifier-mode)))
       ;; additional go packages are in el-get
 
       (use-package golden-ratio
 	:config
-	(golden-ratio-mode 1))
+	(golden-ratio-mode 1)
+	(golden-ratio-toggle-widescreen))
 
       (use-package hcl-mode
 	:mode "\\.hcl.ctmpl\\'")
@@ -231,10 +243,47 @@ an attempt to get it documented and in one place.
 			      ("family" . ?f)
 			      ("personal" . ?p)
 			      ("engineering-success" . ?e)))
+
+	(setq org-capture-templates
+	      '(;; capture template for adding books to reading list - they
+		;; can be re-filed appropriately with C-c C-w
+		;;
+		;;   ** Title
+		;;      :PROPERTIES:
+		;;      :ADDED: [2020-06-06]
+		;;      :END:
+		;;      Some Author
+		("b" "Book" entry (file+headline "books.org" "Inbox")
+		 "** %^{TITLE}\n   :PROPERTIES:\n   :ADDED: %<[%Y-%02m-%02d]>\n   :END:\n   %^{AUTHOR}")
+
+		;; articles - we don't add the date as a property because it's not as important here
+		;;
+		;;   * QUEUED [[link][Article Title]]
+		;;     [2020-16-24]
+		("a" "Article" entry (file "articles.org")
+		 "* QUEUED [[%^{LINK}][%^{TITLE}]]\n  %<[%Y-%02m-%02d]>%?")
+
+		;; just uncategorized things to go into inbox
+		;;
+		;;   * the thing
+		;;     [2020-06-24]
+		("i" "Inbox" entry (file "inbox.org")
+		 "* %^{ITEM}\n  %<[%Y-%02m-%02d]>")))
+
 	(require 'org-tempo)
 
 	(use-package org-bullets
 	  :hook (org-mode . (lambda () (org-bullets-mode 1))))
+
+	(use-package ob-go
+	  :init
+	  (org-babel-do-load-languages
+	   'org-babel-load-languages '((go . t))))
+
+	;; TODO: might not need this actually
+	(require 'ob-shell)
+	(org-babel-do-load-languages
+	 'org-babel-load-languages '((shell . t)))
 
 	:hook
 	(org-mode . flyspell-mode)
@@ -246,7 +295,8 @@ an attempt to get it documented and in one place.
 	       ("M-<right>" . nil)
 	       ("M-S-<right>" . org-metaright)
 	       ("M-C-S-<right>" . org-shiftmetaright)
-	       ("C-j" . nil)))
+	       ("C-j" . nil)
+	       ("C-c C-." . org-time-stamp)))
 
       ;; ;; commented because it's not in the package registries right now :(
       (use-package org-roam
@@ -259,12 +309,7 @@ an attempt to get it documented and in one place.
 		 ""
 		 :immediate-finish t
 		 :file-name "%<%Y-%m-%d>"
-		 :head "#+TITLE: %<%Y-%m-%d>
-
-      ,* Notes
-      ,** Uncategorized
-
-      ,* TODOs")))
+		 :head "#+TITLE: %<%Y-%m-%d>\n* Notes\n** Uncategorized\n* TODOs\n")))
 	:bind (:map my-keys-mode-map
 		    ("C-c o t" . org-roam-dailies-today)
 		    ("C-c o c" . org-roam-capture)
@@ -424,16 +469,17 @@ an attempt to get it documented and in one place.
     (global-set-key (kbd "M-m m") 'my-keys-mode)
 
     (let ((m my-keys-mode-map))
-      (define-key m (kbd "C-t")   'comment-or-uncomment-region)
+      (define-key m (kbd "C-t") 'comment-or-uncomment-region)
       (define-key m (kbd "C-S-T") (lambda () (interactive) (org-agenda)))
-      (define-key m (kbd "M-P")   'package-list-packages)
-      (define-key m (kbd "M-E")   'el-get-list-packages)
-      (define-key m (kbd "M-S")   'eshell)
+      (define-key m (kbd "M-P") 'package-list-packages)
+      (define-key m (kbd "M-E") 'el-get-list-packages)
+      (define-key m (kbd "M-S") 'eshell)
+      (define-key m (kbd "C-c a") 'org-capture)
       (define-key m (kbd "C-c c") 'my-clean)
       (define-key m (kbd "C-c b") 'beacon-blink)
       (define-key m (kbd "C-c p") 'helm-projectile)
       (define-key m (kbd "C-c t") 'heaven-and-hell-toggle-theme)
-      (define-key m (kbd "C-v")   'nav-text-minor-mode)
+      (define-key m (kbd "C-v") 'nav-text-minor-mode)
 
       (define-key m (kbd "C-c . e")       ; open README.org
 	(lambda () (interactive) (find-file "~/.emacs.d/README.org")))
@@ -542,9 +588,6 @@ an attempt to get it documented and in one place.
       "A minor mode so that my hands hurt less."
       nil " nav-text" 'nav-text-minor-mode-map)
   #+end_src
-
-  #+RESULTS:
-  : (keymap (115 . isearch-forward) (83 . isearch-backward) (71 . ace-jump-mode) (103 . goto-line) (101 . end-of-line) (97 . beginning-of-line) (121 . end-of-buffer) (116 . beginning-of-buffer) (76 . forward-paragraph) (79 . backward-paragraph) (75 . forward-word) (74 . backward-word) (108 . next-line) (111 . previous-line) (107 . forward-char) (106 . backward-char) (remap keymap (self-insert-command . undefined)))
 
 * TODOs
 ** TODO google search from keyboard shortcut
