@@ -109,7 +109,7 @@ source $ZSH/oh-my-zsh.sh
 if [[ -n $SSH_CONNECTION ]]; then
     export EDITOR='emacs -nw -q'
 else
-    export EDITOR='emacs'
+    export EDITOR='emacsclient --alternate-editor "" --create-frame'
 fi
 
 LESSPIPE=`which src-hilite-lesspipe.sh`

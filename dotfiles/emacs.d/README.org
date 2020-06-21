@@ -10,16 +10,16 @@ an attempt to get it documented and in one place.
 
 * Workflow
 
-Since this file is managed by dotdrop, the git directory here doesn't
-correspond to how version control is actually happening now.
+  Since this file is managed by dotdrop, the git directory here doesn't
+  correspond to how version control is actually happening now.
 
-When this file (or any config) is edited and the changes work,
-something like the following has to happen (probably from
-=~/.dotfiles=):
+  When this file (or any config) is edited and the changes work,
+  something like the following has to happen (probably from
+  =~/.dotfiles=):
 
-#+begin_src shell :noeval :tangle no 
+  #+begin_src shell :noeval :tangle no
   ./dotdrop.sh --profile=home import ~/.emacs.d/
-#+end_src
+  #+end_src
 
 * General
 
@@ -128,15 +128,16 @@ something like the following has to happen (probably from
 	:commands (beacon-mode beacon-blink)
 	:config
 	(beacon-mode 1)
+	(setq beacon-color "#8aeced")
 	:bind (:map my-keys-mode-map
 		    ("C-c b" . beacon-blink)))
 
-      (use-package bufler)
+      ;; (use-package bufler)
 
       (use-package company
 	:hook (after-init . global-company-mode)
 	:config
-	(setq company-idle-delay .5)
+	(setq company-idle-delay .2)
 	;; starts completing after a single character instead of 3
 	(setq company-minimum-prefix-length 1)
 	;; aligns fields in completions
@@ -170,6 +171,8 @@ something like the following has to happen (probably from
       (use-package forge)
 
       (use-package git-link
+	:config
+	(setq git-link-use-commit t)
 	:bind
 	("C-c l" . git-link))
 
@@ -185,10 +188,15 @@ something like the following has to happen (probably from
 	  (setq flycheck-gometalinter-fast t)
 	  (setq flycheck-gometalinter-tests t)
 	  (flycheck-gometalinter-setup))
+	(use-package go-rename)
+	(use-package gotest)
+	(use-package golint)
 	(use-package go-guru
 	  :ensure t
 	  :hook
-	  (go-mode  . go-guru-hl-identifier-mode)))
+	  (go-mode  . go-guru-hl-identifier-mode)
+	  :config
+	  (setq go-guru-hl-identifier-idle-time .1)))
       ;; additional go packages are in el-get
 
       (use-package golden-ratio
@@ -204,13 +212,14 @@ something like the following has to happen (probably from
 	(after-init . heaven-and-hell-init-hook)
 	:config
 	(setq heaven-and-hell-themes
-	      '((light . bergen)
+	      '((light . soft-morning)
 		(dark . atom-dark)))
 	(setq heaven-and-hell-load-theme-no-confirm t))
 
       (use-package helm
 	:config
 	(helm-mode 1)
+	;; (helm :sources '(helm-bufler-source))
 	:bind  (:map helm-map
 		     ("<tab>" . 'helm-execute-persistent-action)
 		     :map my-keys-mode-map
@@ -220,7 +229,6 @@ something like the following has to happen (probably from
 
       (use-package helm-flyspell
 	:bind (:map my-keys-mode-map
-		    ;; TODO: consider putting this in my-keys-mode-map
 		    ("C-;" . helm-flyspell-correct)))
 
       (use-package helm-projectile)
@@ -228,7 +236,10 @@ something like the following has to happen (probably from
       (use-package json-mode) ;; init in el-get
 
       (use-package lsp-mode)
-      (use-package lsp-ui)
+      (use-package lsp-ui
+	:config
+	(setq lsp-ui-doc-delay .5)
+	(setq lsp-ui-doc-position "Bottom"))
 
       (use-package magit
 	:bind (:map my-keys-mode-map
@@ -239,66 +250,77 @@ something like the following has to happen (probably from
 
       (use-package org
 	:ensure org-plus-contrib
-	;; :commands (org
-	;;            org-capture
-	;;            org-mode
-	;;            org-store-link
-	;;            update-org-hours
-	;;            my-term-agenda
-	;;            dired-notes
-	;;            jump-to-org-agenda)
 	:mode ("\\.org\\'" . org-mode)
 
 	:config
 
 	(setq org-ellipsis "↩")
 	(setq org-todo-keywords
-	      '((sequence "TODO" "IN PROGRESS" "WAITING" "|" "DONE")
-		(sequence "MAYBE")))
+	      '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d)")
+		(sequence "PAUSED(P)")
+		(sequence "MAYBE(m)")))
 	(setq org-directory "~/notes")
 	(setq org-agenda-files (list "~/notes"))
 	(setq org-tag-alist '(("work" . ?w)
 			      ("health" . ?h)
 			      ("family" . ?f)
 			      ("personal" . ?p)
-			      ("engineering-success" . ?e)))
+			      ("es" . ?e)))
+
+	;; refile into any org agenda file
+	(setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
+	(setq org-outline-path-complete-in-steps nil)
+
+	;; log when item was finished
+	;; from https://orgmode.org/manual/Closing-items.html
+	(setq org-log-done 'time)
 
 	(setq org-capture-templates
 	      '(;; capture template for adding books to reading list - they
 		;; can be re-filed appropriately with C-c C-w
 		;;
 		;;   ** Title
-		;;      :PROPERTIES:
-		;;      :ADDED: [2020-06-06]
-		;;      :END:
 		;;      Some Author
+		;;      [2020-06-06]
 		("b" "Book" entry (file+headline "books.org" "Inbox")
-		 "** %^{TITLE}\n   :PROPERTIES:\n   :ADDED: %<[%Y-%02m-%02d]>\n   :END:\n   %^{AUTHOR}")
+		 "** %^{TITLE}\n   %^{AUTHOR}\n   %<[%Y-%02m-%02d %H:%M]>%?")
 
 		;; articles - we don't add the date as a property because it's not as important here
 		;;
 		;;   * QUEUED [[link][Article Title]]
 		;;     [2020-16-24]
 		("a" "Article" entry (file "articles.org")
-		 "* QUEUED [[%^{LINK}][%^{TITLE}]]\n  %<[%Y-%02m-%02d]>%?")
+		 "* QUEUED [[%^{LINK}][%^{TITLE}]]\n  %<[%Y-%02m-%02d %H:%M]>%?")
 
 		;; just uncategorized things to go into inbox
 		;;
 		;;   * the thing
 		;;     [2020-06-24]
 		("i" "Inbox" entry (file "inbox.org")
-		 "* %^{ITEM}\n  %<[%Y-%02m-%02d]>")
+		 "* %^{ITEM}\n  %<[%Y-%02m-%02d %D %H:%M]>%?")
 
 		;; capture project ideas
 		;;
 		;; ** the project idea
 		;;    [2020-06-79]
 		("p" "Project" entry (file+headline "projects.org" "Ideas")
-		 "** %^{PROJECT}\n   %<[%Y-%02m-%02d]>")
+		 "** %^{PROJECT}\n   %<[%Y-%02m-%02d %H:%M]>%?")
 
 		;; quotes!
 		("q" "Quote" entry (file "quotes.org")
-		 "* %^{QUOTE}\n  %^{WHO}\n  %<[%Y-%02m-%02d]>")))
+		 "* %^{QUOTE}\n  %<[%Y-%02m-%02d %H:%M]>  %^{WHO}%?")
+
+		;; vocabulary words
+		;;
+		;; * word
+		;;  [2020-04-30]
+		;; ** definition
+		("v" "Vocab" entry (file "vocab.org")
+		 "* %^{Word}\n  %<[%Y-%02m-%02d %H:%M]>\n  %^{DEF}%?")
+
+		;; for new supplements to evaluate
+		("s" "Supplement" entry (file+headline "supplements.org" "Inbox")
+		 "** %^{SUPP}")))
 
 	(require 'org-tempo)
 
@@ -311,9 +333,15 @@ something like the following has to happen (probably from
 	   'org-babel-load-languages '((go . t))))
 
 	;; TODO: might not need this actually
-	(require 'ob-shell)
-	(org-babel-do-load-languages
-	 'org-babel-load-languages '((shell . t)))
+	(require 'ob-shell
+		 :config
+		 (org-babel-do-load-languages
+		  'org-babel-load-languages '((shell . t))))
+
+
+	(use-package ox-reveal
+	  :config
+	  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
 
 	:hook
 	(org-mode . flyspell-mode)
@@ -328,7 +356,6 @@ something like the following has to happen (probably from
 	       ("C-j" . nil)
 	       ("C-c C-." . org-time-stamp)))
 
-      ;; ;; commented because it's not in the package registries right now :(
       (use-package org-roam
 	:requires org
 	:hook
@@ -339,7 +366,7 @@ something like the following has to happen (probably from
 		 ""
 		 :immediate-finish t
 		 :file-name "%<%Y-%m-%d>"
-		 :head "#+TITLE: %<%Y-%m-%d>\n* Notes\n** Uncategorized\n* TODOs\n")))
+		 :head "#+TITLE: %<%Y-%m-%d>\n* Notes\n** Uncategorized\n* TODOs")))
 	:bind (:map my-keys-mode-map
 		    ("C-c o t" . org-roam-dailies-today)
 		    ("C-c o c" . org-roam-capture)
@@ -509,6 +536,7 @@ something like the following has to happen (probably from
       (define-key m (kbd "C-c b") 'beacon-blink)
       (define-key m (kbd "C-c p") 'helm-projectile)
       (define-key m (kbd "C-c t") 'heaven-and-hell-toggle-theme)
+      (define-key m (kbd "C-c g") 'golden-ratio-toggle-widescreen)
       (define-key m (kbd "C-v") 'nav-text-minor-mode)
 
       (define-key m (kbd "C-c . e")       ; open README.org
@@ -552,8 +580,8 @@ something like the following has to happen (probably from
 			 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 			 "--profile-directory=Profile 2"
 			 "--remote-debugging-port=9222"
-			 "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685"
-			 (getenv "JOE_ZOOM"))))
+			 (getenv "JOE_ZOOM")
+			 "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")))
 
       ;; work
 
