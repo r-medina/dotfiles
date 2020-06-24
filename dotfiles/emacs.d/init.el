@@ -54,7 +54,7 @@
  '(org-roam-server-mode t)
  '(package-selected-packages
    (quote
-    (edit-server golint gotest go-test go-rename use-package)))
+    (atomic-chrome edit-server golint gotest go-test go-rename use-package)))
  '(tramp-syntax (quote simplified) nil (tramp)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

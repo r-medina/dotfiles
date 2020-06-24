@@ -147,6 +147,11 @@ an attempt to get it documented and in one place.
 	:bind (:map my-keys-mode-map
 		    ("C-j" . ace-jump-mode)))
 
+      (use-package atomic-chrome
+	:mode "github\\.com'"
+	:config
+	(atomic-chrome-start-server))
+
       (use-package beacon
 	:commands (beacon-mode beacon-blink)
 	:config
@@ -182,7 +187,6 @@ an attempt to get it documented and in one place.
 
       (use-package dockerfile-mode)
 
-      ;; TODO
       (use-package edit-server
 	:config
 	(edit-server-start)
@@ -192,7 +196,9 @@ an attempt to get it documented and in one place.
 
       (use-package fancy-battery
 	:hook
-	(after-init . fancy-battery-mode))
+	(after-init . fancy-battery-mode)
+	:config
+	(setq display-battery-mode t))
 
       (use-package flycheck)
 
@@ -278,7 +284,11 @@ an attempt to get it documented and in one place.
 		    ("C-S-U" . magit-status)))
 
       (use-package markdown-mode
-	:mode "\\.md\\'")
+	:ensure t
+	:mode (("README\\.md\\'" . gfm-mode)
+	       ("\\.md\\'" . markdown-mode))
+	:init
+	(setq markdown-command "multimarkdown"))
 
       (use-package org
 	:ensure org-plus-contrib
@@ -414,7 +424,8 @@ an attempt to get it documented and in one place.
 		    ("C-c o S" . (lambda () (interactive) (browse-url "http://localhost:8080/"))))
 
 	:config
-	(setq org-roam-directory "~/notes"))
+	(setq org-roam-directory "~/notes")
+	(setq org-roam-server-mode t))
 
       (use-package paredit
 	:hook
@@ -667,9 +678,3 @@ an attempt to get it documented and in one place.
       nil " nav-text" 'nav-text-minor-mode-map)
   #+end_src
 
-* TODOs
-** TODO edit server stuff
-   [2020-06-23 Tue]
-   https://www.emacswiki.org/emacs/Edit_with_Emacs
-** DONE google search from keyboard shortcut
-** DONE make nav-text better and faster to get to
