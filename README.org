@@ -1,0 +1,40 @@
+#+TITLE: dotfiles
+
+* Workflow
+  In order to import updates, run:
+  #+begin_src shell
+    files=(
+	~/.zshrc
+	~/.emacs.d
+	~/.gitconfig
+	~/.gitignore_global
+    )
+
+    ./dotdrop.sh import --profile=home $files
+  #+end_src
+* [[https://github.com/r-medina/dotfiles][GitHub Repository]]
+* Sources
+  - [[https://github.com/acourtneybrown/dotfiles/tree/master/dotfiles][Adam Brown's =dotfiles=]]
+  - set up with GitHub's [[https://github.com/github/scripts-to-rule-them-all][Scripts to Rule Them All]]
+
+* Notes
+** [2020-06-24 Wed]
+   had similar issue with importing emacs stuff
+** [2020-06-22 Mon]
+   ran into issues getting dotdrop working still
+   - had to run dotdrop in verbose mode and see what was going on
+   - some of the diffs were just not being generated
+** merging emacs config into dotfiles
+*** adding git repo into another and preserving history
+    #+begin_src shell
+      git remote add emacsd_remote git@github.com:r-medina/.emacs.d.git
+      git fetch emacsd_remote
+      git merge -s ours --no-commit --allow-unrelated-histories emacsd_remote/master
+      git read-tree --prefix=dotfiles/emacs.d -u emacsd_remote/master
+      git commit -m "imported .emacs.d as a subtree"
+      git remote rm emacsd_remote
+      git push
+    #+end_src
+*** [[https://gist.github.com/myusuf3/7f645819ded92bda6677][removing submodule]]
+** [[file:20200526192638-emacs.org][emacs]]
+* TODOs

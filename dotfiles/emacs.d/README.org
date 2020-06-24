@@ -96,6 +96,29 @@ an attempt to get it documented and in one place.
        (delete-word (- arg)))
    #+end_src
 
+   Better browser:
+   #+begin_src emacs-lisp
+     ;; TODO: make it take more than one url
+     (defun my-chrome (url &optional work)
+       "opens Google chrome. Optional argument profile defaults to
+     personal profile, but if work is passed, it will use my work
+     account. This may only work with my current laptop setup. Exits
+     when emacs quits :("
+       (let ((chrome-cmd (string-join
+			  '("\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\""
+			    "--remote-debugging-port=9222")
+			  " "))
+	     (personal-profile "Profile 2")
+	     (work-profile "Profile 3"))
+	 (save-window-excursion
+	   (start-process "my-chrome-process" nil
+			  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+			  (format "--profile-directory=%s"
+				  (if work work-profile personal-profile))
+			  "--remote-debugging-port=9222"
+			  url))))
+   #+end_src
+
 ** =my-keys-mode-map= setup
 
    More on this later:
@@ -132,7 +155,9 @@ an attempt to get it documented and in one place.
 	:bind (:map my-keys-mode-map
 		    ("C-c b" . beacon-blink)))
 
-      ;; (use-package bufler)
+      (use-package bufler
+	:bind (:map my-keys-mode-map
+		    ("C-c C-f" . bufler)))
 
       (use-package company
 	:hook (after-init . global-company-mode)
@@ -156,6 +181,12 @@ an attempt to get it documented and in one place.
 	(global-diff-hl-mode))
 
       (use-package dockerfile-mode)
+
+      ;; TODO
+      (use-package edit-server
+	:config
+	(edit-server-start)
+	(setq edit-server-new-frame nil))
 
       (use-package expand-region) ;; TODO: am i using this?
 
@@ -225,11 +256,12 @@ an attempt to get it documented and in one place.
 		     :map my-keys-mode-map
 		     ("M-x" . helm-M-x)
 		     ("C-x C-b" . helm-multi-files)
-		     ("C-x C-f" . helm-find-files)))
+		     ("C-x C-f" . helm-find-files)
+		     ("C-x g" . helm-projectile-grep)))
 
       (use-package helm-flyspell
 	:bind (:map my-keys-mode-map
-		    ("C-;" . helm-flyspell-correct)))
+		    ("C--" . helm-flyspell-correct)))
 
       (use-package helm-projectile)
 
@@ -256,7 +288,8 @@ an attempt to get it documented and in one place.
 
 	(setq org-ellipsis "↩")
 	(setq org-todo-keywords
-	      '((sequence "TODO(t)" "IN PROGRESS(p)" "WAITING(w)" "|" "DONE(d)")
+	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)")
+		(sequence "WAITING(w)")
 		(sequence "PAUSED(P)")
 		(sequence "MAYBE(m)")))
 	(setq org-directory "~/notes")
@@ -297,7 +330,7 @@ an attempt to get it documented and in one place.
 		;;   * the thing
 		;;     [2020-06-24]
 		("i" "Inbox" entry (file "inbox.org")
-		 "* %^{ITEM}\n  %<[%Y-%02m-%02d %D %H:%M]>%?")
+		 "* %^{ITEM}\n  %<[%Y-%02m-%02d %H:%M]>%?")
 
 		;; capture project ideas
 		;;
@@ -308,7 +341,7 @@ an attempt to get it documented and in one place.
 
 		;; quotes!
 		("q" "Quote" entry (file "quotes.org")
-		 "* %^{QUOTE}\n  %<[%Y-%02m-%02d %H:%M]>  %^{WHO}%?")
+		 "* %^{QUOTE}\n  %<[%Y-%02m-%02d %H:%M]>\n  %^{WHO}%?")
 
 		;; vocabulary words
 		;;
@@ -320,7 +353,7 @@ an attempt to get it documented and in one place.
 
 		;; for new supplements to evaluate
 		("s" "Supplement" entry (file+headline "supplements.org" "Inbox")
-		 "** %^{SUPP}")))
+		 "** %^{SUPP}\n   %<[%Y-%02m-%02d %H:%M]>")))
 
 	(require 'org-tempo)
 
@@ -557,42 +590,26 @@ an attempt to get it documented and in one place.
       ;; chrome search for work
       (define-key m (kbd "C-c . w")
 	(lambda () (interactive)
-	  (save-window-excursion
-	  (start-process "chrome" nil
-			 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-			 "--remote-debugging-port=9222"
-			 "--profile-directory=Profile 3"
-			 (read-string "url: ")))))
+	  (my-chrome (read-string "url: ")) t))
+
       ;; chrome search for personal
       (define-key m (kbd "C-c . c")
 	(lambda () (interactive)
-	  (save-window-excursion
-	  (start-process "chrome" nil
-			 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-			 "--remote-debugging-port=9222"
-			 "--profile-directory=Profile 2"
-			 (read-string "url: ")))))
+	  (my-chrome (read-string "url: "))))
 
       ;; opens Joe zoom + facebook page
       (define-key m (kbd "C-c . j")
 	(lambda () (interactive)
-	  (start-process "joe-zoom" nil
-			 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-			 "--profile-directory=Profile 2"
-			 "--remote-debugging-port=9222"
-			 (getenv "JOE_ZOOM")
-			 "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")))
+	  (my-chrome (getenv "JOE_ZOOM"))
+	  (my-chrome "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")))
 
       ;; work
 
       ;; open github notifications
       (define-key m (kbd "C-c . n")
 	(lambda () (interactive)
-	  (start-process "notifications" nil
-			 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-			 "--profile-directory=Profile 3"
-			 "--remote-debugging-port=9222"
-			 "https://github.com/notifications")))
+	  (my-chrome "https://github.com/notifications" t)))
+
       m)
 
     ;; for directed buffer navigation
@@ -651,5 +668,8 @@ an attempt to get it documented and in one place.
   #+end_src
 
 * TODOs
+** TODO edit server stuff
+   [2020-06-23 Tue]
+   https://www.emacswiki.org/emacs/Edit_with_Emacs
 ** DONE google search from keyboard shortcut
 ** DONE make nav-text better and faster to get to
