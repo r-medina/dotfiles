@@ -249,8 +249,8 @@ an attempt to get it documented and in one place.
 	(after-init . heaven-and-hell-init-hook)
 	:config
 	(setq heaven-and-hell-themes
-	      '((light . soft-morning)
-		(dark . atom-dark)))
+	      '((light . Greymatters-light) ;; soft-morning
+		(dark . Greymatters-dark)))
 	(setq heaven-and-hell-load-theme-no-confirm t))
 
       (use-package helm
@@ -447,10 +447,10 @@ an attempt to get it documented and in one place.
 
       (use-package protobuf-mode)
 
-      (use-package smart-mode-line
-	:commands sml/setup
-	:hook
-	(after-init . sml/setup))
+      ;; (use-package smart-mode-line
+      ;;   :commands sml/setup
+      ;;   :hook
+      ;;   (after-init . sml/setup))
 
       (use-package switch-window
 	:bind (:map my-keys-mode-map
@@ -505,7 +505,7 @@ an attempt to get it documented and in one place.
       (setq my-packages
 	    '(atom-dark-theme
 	      chrome.el
-	      emacs-powerline
+	      ;; emacs-powerline
 	      go-mod
 	      go-imports))
     #+end_src
@@ -677,4 +677,50 @@ an attempt to get it documented and in one place.
       "A minor mode so that my hands hurt less."
       nil " nav-text" 'nav-text-minor-mode-map)
   #+end_src
+* Elegance
 
+  I was inspired by [[https://github.com/rougier/elegant-emacs][elegant-emacs]]' really minimal setup.  I started to
+  take parts of it and realized that there wasn't much to the core
+  pieces I like.
+
+  #+begin_src emacs-lisp
+    ;; Font and frame size
+    (set-face-font 'default "Roboto Mono Light 12")
+
+    ;; Underline line at descent position, not baseline position
+    (setq x-underline-at-descent-line t)
+
+    ;; No ugly button for checkboxes
+    (setq widget-image-enable nil)
+
+    (define-key mode-line-major-mode-keymap [header-line]
+      (lookup-key mode-line-major-mode-keymap [mode-line]))
+
+    (defun mode-line-render (left right)
+      (let* ((available-width (- (window-width) (length left) )))
+	(format (format "%%s %%%ds" available-width) left right)))
+    (setq-default mode-line-format
+		  '((:eval
+		     (mode-line-render
+		      (format-mode-line (list
+					 (propertize "☰" 'face `(:inherit mode-line-buffer-id)
+						     'help-echo "Mode(s) menu"
+						     'mouse-face 'mode-line-highlight
+						     'local-map   mode-line-major-mode-keymap)
+					 " %b "
+					 (if (and buffer-file-name (buffer-modified-p))
+					     (propertize "(modified)" 'face `(:inherit face-faded)))))
+		      (format-mode-line
+		       (propertize "%4l:%2c  " 'face `(:inherit face-faded)))))))
+
+
+    ;; Comment if you want to keep the modeline at the bottom
+    (setq-default header-line-format mode-line-format)
+    (setq-default mode-line-format'(""))
+
+
+    ;; Vertical window divider
+    (setq window-divider-default-right-width 3)
+    (setq window-divider-default-places 'right-only)
+    (window-divider-mode)
+  #+end_src
