@@ -29,11 +29,13 @@
 
  (deftheme Greymatters-light)
  (let ((class '((class color) (min-colors 89)))
+       (faded-fg "#737373")
+       (subtle-bg "#f0f0f0")
        (fg1 "#2f2f2f")
        (fg2 "#404040")
        (fg3 "#505050")
        (fg4 "#616161")
-       (bg1 "#fafafa")
+       (bg1 "#f7f5f2")
        (bg2 "#e6e6e6")
        (bg3 "#d2d2d2")
        (bg4 "#4d4d4d")
@@ -239,7 +241,10 @@
         `(jde-java-font-lock-constant-face ((t (:foreground ,const))))
         `(jde-java-font-lock-modifier-face ((t (:foreground ,fg2))))
         `(jde-jave-font-lock-protected-face ((t (:foreground ,keyword))))
-        `(jde-java-font-lock-number-face ((t (:foreground ,var))))))
+        `(jde-java-font-lock-number-face ((t (:foreground ,var))))
+
+	`(face-faded ((,class (:foreground ,faded-fg))))
+	`(face-subtle ((,class (:background ,subtle-bg :foreground ,faded-fg))))))
 
 ;;;###autoload
 (when load-file-name

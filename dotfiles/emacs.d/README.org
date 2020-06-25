@@ -689,6 +689,23 @@ an attempt to get it documented and in one place.
   pieces I like.
 
   #+begin_src emacs-lisp
+    (defface face-faded nil
+      "Faded face is for information that are less important.
+    It is made by using the same hue as the default but with a lesser
+    intensity than the default. It can be used for comments,
+    secondary information and also replace italic (which is generally
+    abused anyway)."
+
+      ;; TODO
+      :group 'elegance)
+
+    (defface face-subtle nil
+      "Subtle face is used to suggest a physical area on the screen.
+    It is important to not disturb too strongly the reading of
+    information and this can be made by setting a very light
+    background color that is barely perceptible."
+      :group 'elegance)
+
     ;; Font and frame size
     (set-face-font 'default "Roboto Mono Light 12")
 
@@ -714,10 +731,17 @@ an attempt to get it documented and in one place.
 						     'local-map   mode-line-major-mode-keymap)
 					 " %b "
 					 (if (and buffer-file-name (buffer-modified-p))
-					     (propertize "(modified)"))))
+					     (propertize "* " 'face `(:inherit face-faded)))
+					 (if vc-mode
+					     ;; TODO
+					     ;; from https://www.reddit.com/r/emacs/comments/8ng8io/how_do_show_only_git_branch_on_modeline/
+					     (let* ((noback (replace-regexp-in-string (format "^ %s" (vc-backend buffer-file-name)) " " vc-mode))
+						    (face (cond ((string-match "^ -" noback) 'mode-line-vc)
+								((string-match "^ [:@]" noback) 'mode-line-vc-edit)
+								((string-match "^ [!\\?]" noback) 'mode-line-vc-modified))))
+					       (propertize (format "@%s" (substring noback 2)) 'face '(:inherit face-subtle))))))
 		      (format-mode-line
 		       (propertize "%4l:%2c  "))))))
-
 
     ;; Comment if you want to keep the modeline at the bottom
     (setq-default header-line-format mode-line-format)
