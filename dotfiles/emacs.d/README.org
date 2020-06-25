@@ -36,10 +36,15 @@ an attempt to get it documented and in one place.
 
 ** Miscellaneous
 
+   Only one space after period
+   #+begin_src emacs-lisp
+     (setq sentence-end-double-space nil)
+   #+end_src
+
    [[https://www.emacswiki.org/emacs/WinnerMode][=winner-mode=]] allows for window configuration undo and redo with
    =C-c left= and =C-c right=
    #+begin_src emacs-lisp
-   (setq winner-mode t)
+     (setq winner-mode t)
    #+end_src
 
    Fixes =dired= issue on startup
@@ -601,7 +606,7 @@ an attempt to get it documented and in one place.
       ;; chrome search for work
       (define-key m (kbd "C-c . w")
 	(lambda () (interactive)
-	  (my-chrome (read-string "url: ")) t))
+	  (my-chrome (read-string "url: ") t))) 
 
       ;; chrome search for personal
       (define-key m (kbd "C-c . c")
@@ -678,7 +683,7 @@ an attempt to get it documented and in one place.
       nil " nav-text" 'nav-text-minor-mode-map)
   #+end_src
 * Elegance
-
+  
   I was inspired by [[https://github.com/rougier/elegant-emacs][elegant-emacs]]' really minimal setup.  I started to
   take parts of it and realized that there wasn't much to the core
   pieces I like.
@@ -709,9 +714,9 @@ an attempt to get it documented and in one place.
 						     'local-map   mode-line-major-mode-keymap)
 					 " %b "
 					 (if (and buffer-file-name (buffer-modified-p))
-					     (propertize "(modified)" 'face `(:inherit face-faded)))))
+					     (propertize "(modified)"))))
 		      (format-mode-line
-		       (propertize "%4l:%2c  " 'face `(:inherit face-faded)))))))
+		       (propertize "%4l:%2c  "))))))
 
 
     ;; Comment if you want to keep the modeline at the bottom
