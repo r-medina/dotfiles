@@ -25,16 +25,26 @@ an attempt to get it documented and in one place.
 
 ** Keep the backups in a sane location
    #+begin_src emacs-lisp
-   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-   (setq backup-by-copying t)
+     (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+     (setq backup-by-copying t)
    #+end_src
 
 ** And not that I'm writing too much elisp, but just in case
    #+begin_src emacs-lisp
-   (add-to-list 'load-path "~/.emacs.d/usr")
+     (add-to-list 'load-path "~/.emacs.d/usr")
    #+end_src
 
 ** Miscellaneous
+
+   Cursor color:
+   #+begin_src emacs-lisp
+     (set-cursor-color "#77bdbf"))
+   #+end_src
+
+   Supposed to help with performance
+   #+begin_src emacs-lisp
+     (setq inhibit-compacting-font-caches t)
+   #+end_src
 
    Only one space after period
    #+begin_src emacs-lisp
@@ -153,7 +163,7 @@ an attempt to get it documented and in one place.
 		    ("C-j" . ace-jump-mode)))
 
       (use-package atomic-chrome
-	:mode "github\\.com'"
+	:mode (("github\\.com'" . gfm-mode))
 	:config
 	(atomic-chrome-start-server))
 
@@ -161,7 +171,7 @@ an attempt to get it documented and in one place.
 	:commands (beacon-mode beacon-blink)
 	:config
 	(beacon-mode 1)
-	(setq beacon-color "#8aeced")
+	(setq beacon-color "#77bdbf")
 	:bind (:map my-keys-mode-map
 		    ("C-c b" . beacon-blink)))
 
@@ -177,7 +187,7 @@ an attempt to get it documented and in one place.
 	(setq company-minimum-prefix-length 1)
 	;; aligns fields in completions
 	(setq company-tooltip-align-annotations t)
-	(setq company-global-modes '(not markdown-mode)))
+	(setq company-global-modes '(not markdown-mode org-mode)))
       (use-package company-lsp)
 
       (use-package diff-hl
@@ -198,12 +208,6 @@ an attempt to get it documented and in one place.
 	(setq edit-server-new-frame nil))
 
       (use-package expand-region) ;; TODO: am i using this?
-
-      (use-package fancy-battery
-	:hook
-	(after-init . fancy-battery-mode)
-	:config
-	(setq display-battery-mode t))
 
       (use-package flycheck)
 
@@ -253,10 +257,18 @@ an attempt to get it documented and in one place.
 	:hook
 	(after-init . heaven-and-hell-init-hook)
 	:config
+	(setq heaven-and-hell-theme-type 'dark)
 	(setq heaven-and-hell-themes
-	      '((light . Greymatters-light) ;; soft-morning
+	      '((light . Greymatters-light)
 		(dark . Greymatters-dark)))
-	(setq heaven-and-hell-load-theme-no-confirm t))
+	(setq heaven-and-hell-load-theme-no-confirm t)
+
+	;; toggling unfortunately breaks org-bullets
+	(defun org-bullets-fix-font ()
+	  (let ((foreground (org-find-invisible-foreground)))
+	    (when foreground
+	      (set-face-foreground 'org-hide foreground))))
+	(advice-add 'heaven-and-hell-toggle-theme :after #'org-bullets-fix-font))
 
       (use-package helm
 	:config
@@ -298,6 +310,20 @@ an attempt to get it documented and in one place.
       (use-package org
 	:ensure org-plus-contrib
 	:mode ("\\.org\\'" . org-mode)
+	:hook
+	(org-mode . flyspell-mode)
+	(org-mode . turn-on-auto-fill)
+
+	:bind (("C-j" . nil)
+	       :map org-mode-map
+	       ("M-<left>" . nil)
+	       ("M-S-<left>" . org-metaleft)
+	       ("M-C-S-<left>" . org-shiftmetaleft)
+	       ("M-<right>" . nil)
+	       ("M-S-<right>" . org-metaright)
+	       ("M-C-S-<right>" . org-shiftmetaright)
+	       ("C-j" . nil)
+	       ("C-c C-." . org-time-stamp))
 
 	:config
 
@@ -328,10 +354,11 @@ an attempt to get it documented and in one place.
 		;; can be re-filed appropriately with C-c C-w
 		;;
 		;;   ** Title
-		;;      Some Author
 		;;      [2020-06-06]
+		;;
+		;;      Some Author
 		("b" "Book" entry (file+headline "books.org" "Inbox")
-		 "** %^{TITLE}\n   %^{AUTHOR}\n   %<[%Y-%02m-%02d %H:%M]>%?")
+		 "** %^{TITLE}\n   %<[%Y-%02m-%02d %H:%M]>\n\n   %^{AUTHOR}%?")
 
 		;; articles - we don't add the date as a property because it's not as important here
 		;;
@@ -355,22 +382,31 @@ an attempt to get it documented and in one place.
 		 "** %^{PROJECT}\n   %<[%Y-%02m-%02d %H:%M]>%?")
 
 		;; quotes!
+		;; * the quote
+		;;   [2020-04-11]
 		("q" "Quote" entry (file "quotes.org")
 		 "* %^{QUOTE}\n  %<[%Y-%02m-%02d %H:%M]>\n  %^{WHO}%?")
 
 		;; vocabulary words
 		;;
 		;; * word
-		;;  [2020-04-30]
-		;; ** definition
+		;;   [2020-04-30]
+		;;   definition
 		("v" "Vocab" entry (file "vocab.org")
 		 "* %^{Word}\n  %<[%Y-%02m-%02d %H:%M]>\n  %^{DEF}%?")
 
 		;; for new supplements to evaluate
+		;; ** supplement
+		;;    [2020-01-11]
 		("s" "Supplement" entry (file+headline "supplements.org" "Inbox")
 		 "** %^{SUPP}\n   %<[%Y-%02m-%02d %H:%M]>")))
 
 	(require 'org-tempo)
+
+	;; ;; TODO
+	;; ;; (use-package helm-org
+	;; ;;   :config
+	;; ;;   (add-to-list 'helm-completing-read-handlers-alist '(org-capture . helm-org-completing-read-tags)))
 
 	(use-package org-bullets
 	  :hook (org-mode . (lambda () (org-bullets-mode 1))))
@@ -386,23 +422,9 @@ an attempt to get it documented and in one place.
 		 (org-babel-do-load-languages
 		  'org-babel-load-languages '((shell . t))))
 
-
 	(use-package ox-reveal
 	  :config
-	  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
-
-	:hook
-	(org-mode . flyspell-mode)
-	:bind (("C-j" . nil)
-	       :map org-mode-map
-	       ("M-<left>" . nil)
-	       ("M-S-<left>" . org-metaleft)
-	       ("M-C-S-<left>" . org-shiftmetaleft)
-	       ("M-<right>" . nil)
-	       ("M-S-<right>" . org-metaright)
-	       ("M-C-S-<right>" . org-shiftmetaright)
-	       ("C-j" . nil)
-	       ("C-c C-." . org-time-stamp)))
+	  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js")))
 
       (use-package org-roam
 	:requires org
@@ -414,7 +436,7 @@ an attempt to get it documented and in one place.
 		 ""
 		 :immediate-finish t
 		 :file-name "%<%Y-%m-%d>"
-		 :head "#+TITLE: %<%Y-%m-%d>\n* Notes\n** Uncategorized\n* TODOs")))
+		 :head "#+TITLE: %<%Y-%m-%d>\n\n* Notes\n\n** Uncategorized\n\n* TODOs")))
 	:bind (:map my-keys-mode-map
 		    ("C-c o t" . org-roam-dailies-today)
 		    ("C-c o c" . org-roam-capture)
@@ -426,7 +448,7 @@ an attempt to get it documented and in one place.
 		    ("C-c o d" . org-roam-dailies-date)
 		    ("C-c o i" . org-roam-insert)
 		    ("C-c o s" . org-roam-server-mode)
-		    ("C-c o S" . (lambda () (interactive) (browse-url "http://localhost:8080/"))))
+		    ("C-c o S" . (lambda () (interactive) (my-chrome "http://localhost:8080/"))))
 
 	:config
 	(setq org-roam-directory "~/notes")
@@ -448,14 +470,13 @@ an attempt to get it documented and in one place.
 	:config
 	(turn-on-pbcopy))
 
+      (use-package perfect-margin
+	:config
+	(perfect-margin-mode t))
+
       (use-package plantuml-mode)
 
       (use-package protobuf-mode)
-
-      ;; (use-package smart-mode-line
-      ;;   :commands sml/setup
-      ;;   :hook
-      ;;   (after-init . sml/setup))
 
       (use-package switch-window
 	:bind (:map my-keys-mode-map
@@ -471,10 +492,6 @@ an attempt to get it documented and in one place.
 
       (use-package yaml-mode
 	:mode ("\\.yaml\\'" "\\.yml\\'"))
-
-      (use-package yascroll
-	:config
-	(global-yascroll-bar-mode))
 
       (use-package yasnippet
 	:config
@@ -555,6 +572,7 @@ an attempt to get it documented and in one place.
   #+begin_src emacs-lisp
     (setq ruby-insert-encoding-magic-comment nil)
   #+end_src
+
 * Key Bindings
 
   Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this stackoverflow]]. The idea is you make all your
@@ -606,7 +624,7 @@ an attempt to get it documented and in one place.
       ;; chrome search for work
       (define-key m (kbd "C-c . w")
 	(lambda () (interactive)
-	  (my-chrome (read-string "url: ") t))) 
+	  (my-chrome (read-string "url: ") t)))
 
       ;; chrome search for personal
       (define-key m (kbd "C-c . c")
@@ -682,13 +700,14 @@ an attempt to get it documented and in one place.
       "A minor mode so that my hands hurt less."
       nil " nav-text" 'nav-text-minor-mode-map)
   #+end_src
+
 * Elegance
-  
+
   I was inspired by [[https://github.com/rougier/elegant-emacs][elegant-emacs]]' really minimal setup.  I started to
   take parts of it and realized that there wasn't much to the core
   pieces I like.
 
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :results silent
     (defface face-faded nil
       "Faded face is for information that are less important.
     It is made by using the same hue as the default but with a lesser
@@ -707,7 +726,7 @@ an attempt to get it documented and in one place.
       :group 'elegance)
 
     ;; Font and frame size
-    (set-face-font 'default "Roboto Mono Light 12")
+    (set-face-font 'default "Monaco Light 13")
 
     ;; Underline line at descent position, not baseline position
     (setq x-underline-at-descent-line t)
@@ -730,8 +749,6 @@ an attempt to get it documented and in one place.
 						     'mouse-face 'mode-line-highlight
 						     'local-map   mode-line-major-mode-keymap)
 					 " %b "
-					 (if (and buffer-file-name (buffer-modified-p))
-					     (propertize "* " 'face `(:inherit face-faded)))
 					 (if vc-mode
 					     ;; TODO
 					     ;; from https://www.reddit.com/r/emacs/comments/8ng8io/how_do_show_only_git_branch_on_modeline/
@@ -739,7 +756,10 @@ an attempt to get it documented and in one place.
 						    (face (cond ((string-match "^ -" noback) 'mode-line-vc)
 								((string-match "^ [:@]" noback) 'mode-line-vc-edit)
 								((string-match "^ [!\\?]" noback) 'mode-line-vc-modified))))
-					       (propertize (format "@%s" (substring noback 2)) 'face '(:inherit face-subtle))))))
+					       (propertize (format " @%s " (substring noback 2)) 'face '(:inherit face-subtle))))
+					 " "
+					 (if (and buffer-file-name (buffer-modified-p))
+					     (propertize "*" 'face `(:inherit face-faded)))))
 		      (format-mode-line
 		       (propertize "%4l:%2c  "))))))
 

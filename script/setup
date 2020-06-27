@@ -16,8 +16,10 @@ pip install -r dotdrop/requirements.txt
 deactivate
 
 case "$(uname -s)" in
-    # Darwin)       
-    # ;;
+    Darwin)
+	mkdir -p ~/notes
+	ln -s ~/Library/Mobile\ Documents/iCloud\~com\~appsonthemove\~beorg/Documents/org ~/notes
+	;;
 
     # Linux)
     # ;;
