@@ -284,7 +284,8 @@ an attempt to get it documented and in one place.
 		     ("M-x" . helm-M-x)
 		     ("C-x C-b" . helm-multi-files)
 		     ("C-x C-f" . helm-find-files)
-		     ("C-x g" . helm-projectile-grep)))
+		     ("C-x g" . helm-projectile-grep)
+		     ("C-c p" . helm-projectile)))
 
       (use-package helm-flyspell
 	:bind (:map my-keys-mode-map
@@ -313,6 +314,7 @@ an attempt to get it documented and in one place.
 
       (use-package org
 	:ensure org-plus-contrib
+	:commands (org-mac-iCal)
 	:mode ("\\.org\\'" . org-mode)
 	:hook
 	(org-mode . flyspell-mode)
@@ -329,7 +331,11 @@ an attempt to get it documented and in one place.
 	       ("C-j" . nil)
 	       ("C-c C-." . org-time-stamp))
 
+	:init
+
 	:config
+
+	(add-to-list 'org-modules 'org-mac-iCal)
 
 	(setq org-ellipsis "↩")
 	(setq org-todo-keywords
@@ -338,8 +344,11 @@ an attempt to get it documented and in one place.
 		(sequence "PAUSED(P)")
 		(sequence "MAYBE(m)")))
 	(setq org-directory "~/notes")
-	(setq org-agenda-files (list "~/notes"))
-	(setq org-tag-alist '(("work" . ?w)
+	(setq org-agenda-files '("~/notes"))
+	(setq org-tag-alist '((:startgrouptag)
+			      ("work" . ?w)
+			      (:grouptags)
+			      (:endgrouptag)
 			      ("health" . ?h)
 			      ("family" . ?f)
 			      ("personal" . ?p)
@@ -506,7 +515,9 @@ an attempt to get it documented and in one place.
 **** TODO make a macro to encapsulate =:bind (:map my-key-mode-map)=
 
 
-** [[https://github.com/dimitri/el-get][=el-get=]]
+** el-get
+
+   https://github.com/dimitri/el-get
 
 *** Installation
     #+begin_src emacs-lisp
@@ -529,7 +540,7 @@ an attempt to get it documented and in one place.
 *** My packages
     #+begin_src emacs-lisp
       (setq my-packages
-	    '(atom-dark-theme
+	    '(;; atom-dark-theme
 	      chrome.el
 	      ;; emacs-powerline
 	      go-mod
@@ -608,7 +619,6 @@ an attempt to get it documented and in one place.
       (define-key m (kbd "C-c a") 'org-capture)
       (define-key m (kbd "C-c c") 'my-clean)
       (define-key m (kbd "C-c b") 'beacon-blink)
-      (define-key m (kbd "C-c p") 'helm-projectile)
       (define-key m (kbd "C-c t") 'heaven-and-hell-toggle-theme)
       (define-key m (kbd "C-c g") 'golden-ratio-toggle-widescreen)
       (define-key m (kbd "C-v") 'nav-text-minor-mode)
