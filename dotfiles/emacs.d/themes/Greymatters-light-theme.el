@@ -244,7 +244,8 @@
         `(jde-java-font-lock-number-face ((t (:foreground ,var))))
 
 	`(face-faded ((,class (:foreground ,faded-fg))))
-	`(face-subtle ((,class (:background ,subtle-bg :foreground ,faded-fg))))))
+	`(face-subtle ((,class (:background ,subtle-bg :foreground ,faded-fg))))
+	`(org-table ((,class (:background ,subtle-bg :foreground ,faded-fg))))))
 
 ;;;###autoload
 (when load-file-name

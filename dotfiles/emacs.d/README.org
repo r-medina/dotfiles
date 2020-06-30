@@ -2,6 +2,8 @@
 #+AUTHOR: Ricky Medina
 #+DATE: 2020-05-27
 
+#+PROPERTY: header-args :results silent
+
 After getting to know org-mode, I am starting the process of moving more and
 more of my life onto it.
 
@@ -21,6 +23,7 @@ an attempt to get it documented and in one place.
   ./dotdrop.sh --profile=home import ~/.emacs.d/
   #+end_src
 
+
 * General
 
 ** Keep the backups in a sane location
@@ -38,7 +41,7 @@ an attempt to get it documented and in one place.
 
    Cursor color:
    #+begin_src emacs-lisp
-     (set-cursor-color "#77bdbf"))
+     (set-cursor-color "#77bdbf")
    #+end_src
 
    Supposed to help with performance
@@ -142,6 +145,7 @@ an attempt to get it documented and in one place.
      (defvar my-keys-mode-map (make-keymap) "key map containing all of my personal shortcuts")
    #+end_src
 
+
 * Packages
 
   A lot of the following was taken from [[https://github.com/hrs/dotfiles/blob/master/emacs/dot-emacs.d/init.el][this config]].
@@ -196,9 +200,7 @@ an attempt to get it documented and in one place.
 	(diff-hl-mode . diff-hl-margin-mode)
 	(diff-hl-mode . diff-hl-flydiff-mode)
 	(magit-pre-refresh . diff-hl-magit-pre-refresh)
-	(magit-post-refresh . diff-hl-magit-post-refresh)
-	:config
-	(global-diff-hl-mode))
+	(magit-post-refresh . diff-hl-magit-post-refresh))
 
       (use-package dockerfile-mode)
 
@@ -265,6 +267,7 @@ an attempt to get it documented and in one place.
 
 	;; toggling unfortunately breaks org-bullets
 	(defun org-bullets-fix-font ()
+	(set-cursor-color "#77bdbf")
 	  (let ((foreground (org-find-invisible-foreground)))
 	    (when foreground
 	      (set-face-foreground 'org-hide foreground))))
@@ -436,7 +439,7 @@ an attempt to get it documented and in one place.
 		 ""
 		 :immediate-finish t
 		 :file-name "%<%Y-%m-%d>"
-		 :head "#+TITLE: %<%Y-%m-%d>\n\n* Notes\n\n** Uncategorized\n\n* TODOs")))
+		 :head "#+TITLE: %<%Y-%m-%d>\n\n* Notes\n\n** Uncategorized\n\n\n* TODOs")))
 	:bind (:map my-keys-mode-map
 		    ("C-c o t" . org-roam-dailies-today)
 		    ("C-c o c" . org-roam-capture)
@@ -470,9 +473,7 @@ an attempt to get it documented and in one place.
 	:config
 	(turn-on-pbcopy))
 
-      (use-package perfect-margin
-	:config
-	(perfect-margin-mode t))
+      (use-package perfect-margin)
 
       (use-package plantuml-mode)
 
@@ -541,6 +542,7 @@ an attempt to get it documented and in one place.
       (el-get 'sync my-packages)
     #+end_src
 
+
 * Look/Feel
 
   #+begin_src emacs-lisp
@@ -566,12 +568,14 @@ an attempt to get it documented and in one place.
     (setq auto-window-vscroll nil)
   #+end_src
 
+
 * Programming
 
   Fixes annoying comment that =ruby-mode= puts in:
   #+begin_src emacs-lisp
     (setq ruby-insert-encoding-magic-comment nil)
   #+end_src
+
 
 * Key Bindings
 
@@ -668,6 +672,7 @@ an attempt to get it documented and in one place.
       (define-key m (kbd "o") 'outline-minor-mode)
       (define-key m (kbd "d") 'diff-hl-mode)
       (define-key m (kbd "h") 'global-hl-line-mode)
+      (define-key m (kbd "r") 'perfect-margin-mode)
       (define-key m (kbd "a") 'auto-complete-mode)
       (define-key m (kbd "t") 'toggle-truncate-lines))
 
@@ -701,6 +706,7 @@ an attempt to get it documented and in one place.
       nil " nav-text" 'nav-text-minor-mode-map)
   #+end_src
 
+
 * Elegance
 
   I was inspired by [[https://github.com/rougier/elegant-emacs][elegant-emacs]]' really minimal setup.  I started to
@@ -727,6 +733,7 @@ an attempt to get it documented and in one place.
 
     ;; Font and frame size
     (set-face-font 'default "Monaco Light 13")
+    (setq-default line-spacing 4)
 
     ;; Underline line at descent position, not baseline position
     (setq x-underline-at-descent-line t)
@@ -759,9 +766,7 @@ an attempt to get it documented and in one place.
 					       (propertize (format " @%s " (substring noback 2)) 'face '(:inherit face-subtle))))
 					 " "
 					 (if (and buffer-file-name (buffer-modified-p))
-					     (propertize "*" 'face `(:inherit face-faded)))))
-		      (format-mode-line
-		       (propertize "%4l:%2c  "))))))
+					     (propertize "*" 'face `(:inherit face-faded)))))))))
 
     ;; Comment if you want to keep the modeline at the bottom
     (setq-default header-line-format mode-line-format)
