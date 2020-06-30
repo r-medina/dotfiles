@@ -267,10 +267,11 @@ an attempt to get it documented and in one place.
 
 	;; toggling unfortunately breaks org-bullets
 	(defun org-bullets-fix-font ()
-	(set-cursor-color "#77bdbf")
-	  (let ((foreground (org-find-invisible-foreground)))
-	    (when foreground
-	      (set-face-foreground 'org-hide foreground))))
+	  (set-cursor-color "#77bdbf")
+	  (if org-bullets-mode
+	      (let ((foreground (org-find-invisible-foreground)))
+		(when foreground
+		  (set-face-foreground 'org-hide foreground)))))
 	(advice-add 'heaven-and-hell-toggle-theme :after #'org-bullets-fix-font))
 
       (use-package helm
@@ -342,7 +343,8 @@ an attempt to get it documented and in one place.
 			      ("health" . ?h)
 			      ("family" . ?f)
 			      ("personal" . ?p)
-			      ("es" . ?e)))
+			      ("es" . ?e)
+			      ("email" . ?m)))
 
 	;; refile into any org agenda file
 	(setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
@@ -502,6 +504,7 @@ an attempt to get it documented and in one place.
     #+end_src
 
 **** TODO make a macro to encapsulate =:bind (:map my-key-mode-map)=
+
 
 ** [[https://github.com/dimitri/el-get][=el-get=]]
 
@@ -766,7 +769,9 @@ an attempt to get it documented and in one place.
 					       (propertize (format " @%s " (substring noback 2)) 'face '(:inherit face-subtle))))
 					 " "
 					 (if (and buffer-file-name (buffer-modified-p))
-					     (propertize "*" 'face `(:inherit face-faded)))))))))
+					     (propertize "*" 'face `(:inherit face-faded)))))
+		      (format-mode-line
+		       (propertize ""))))))
 
     ;; Comment if you want to keep the modeline at the bottom
     (setq-default header-line-format mode-line-format)

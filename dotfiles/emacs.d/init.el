@@ -44,7 +44,7 @@
  '(custom-enabled-themes (quote (Greymatters-light)))
  '(custom-safe-themes
    (quote
-    ("323964cdaee8528eeff0b721974bb033c44a2b73d795a31ceba554f764109a20" "0da70fb7c272d8e87b9343a6f36d7f9eed520ef64beaab03478113968fbed1d9" "0aa971daea004737402f4cd0575cfa6dc2fa00206cd03c77ee2c3b5d3b5f19d6" "9685cefcb4efd32520b899a34925c476e7920725c8d1f660e7336f37d6d95764" "0a8b8aad17f3bd4af1839a49cd97048c90db98a088b1f6f6d0d2187a3c35321d" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "319bf1bab5d05e3a4c4a165efe69d27b3d975759034074f15fe61e92c7304884" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+    ("fb5a4e1730c349ca59a6955cb513e00ec6adb545db79fae0dbafc28af82c59ff" "323964cdaee8528eeff0b721974bb033c44a2b73d795a31ceba554f764109a20" "0da70fb7c272d8e87b9343a6f36d7f9eed520ef64beaab03478113968fbed1d9" "0aa971daea004737402f4cd0575cfa6dc2fa00206cd03c77ee2c3b5d3b5f19d6" "9685cefcb4efd32520b899a34925c476e7920725c8d1f660e7336f37d6d95764" "0a8b8aad17f3bd4af1839a49cd97048c90db98a088b1f6f6d0d2187a3c35321d" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "319bf1bab5d05e3a4c4a165efe69d27b3d975759034074f15fe61e92c7304884" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(custom-theme-directory "~/.emacs.d/themes")
  '(display-battery-mode t)
  '(electric-pair-mode t)
@@ -57,8 +57,7 @@
  '(org-roam-server-mode nil)
  '(package-selected-packages
    (quote
-    (perfect-margin helm-org atomic-chrome edit-server golint gotest go-test go-rename use-package)))
- '(perfect-margin-mode t)
+    (atomic-chrome edit-server golint gotest go-test go-rename use-package)))
  '(tramp-syntax (quote simplified) nil (tramp)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

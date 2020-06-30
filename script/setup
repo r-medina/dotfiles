@@ -18,6 +18,7 @@ deactivate
 case "$(uname -s)" in
     Darwin)
 	mkdir -p ~/notes
+	# TODO: set up icloud stuff so this works
 	ln -s ~/Library/Mobile\ Documents/iCloud\~com\~appsonthemove\~beorg/Documents/org ~/notes
 	;;
 
