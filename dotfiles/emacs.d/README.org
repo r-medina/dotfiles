@@ -331,29 +331,36 @@ an attempt to get it documented and in one place.
 	       ("C-j" . nil)
 	       ("C-c C-." . org-time-stamp))
 
-	:init
-
 	:config
 
-	(add-to-list 'org-modules 'org-mac-iCal)
+	(set-time-zone-rule "/usr/share/zoneinfo/America/New_York")
 
 	(setq org-ellipsis "↩")
 	(setq org-todo-keywords
-	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)")
+	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)" "SKIP(k)")
 		(sequence "WAITING(w)")
 		(sequence "PAUSED(P)")
-		(sequence "MAYBE(m)")))
+		(sequence "MAYBE(m)")
+		;; adding this so i can keep todos for tasks
+		(sequence "SCHED(s)" "|" "SKIP(K)")))
 	(setq org-directory "~/notes")
 	(setq org-agenda-files '("~/notes"))
 	(setq org-tag-alist '((:startgrouptag)
 			      ("work" . ?w)
 			      (:grouptags)
+			      ("meeting" . ?t)
 			      (:endgrouptag)
 			      ("health" . ?h)
+			      (:startgrouptag)
 			      ("family" . ?f)
+			      (:grouptags)
+			      ("mom" . ?m)
+			      ("dad" . ?d)
+			      ("zach" . ?z)
+			      (:endgrouptag)
 			      ("personal" . ?p)
 			      ("es" . ?e)
-			      ("email" . ?m)))
+			      ("email" . ?l)))
 
 	;; refile into any org agenda file
 	(setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
@@ -392,7 +399,7 @@ an attempt to get it documented and in one place.
 		;;
 		;; ** the project idea
 		;;    [2020-06-79]
-		("p" "Project" entry (file+headline "projects.org" "Ideas")
+		("P" "Project" entry (file+headline "projects.org" "Ideas")
 		 "** %^{PROJECT}\n   %<[%Y-%02m-%02d %H:%M]>%?")
 
 		;; quotes!
@@ -413,7 +420,19 @@ an attempt to get it documented and in one place.
 		;; ** supplement
 		;;    [2020-01-11]
 		("s" "Supplement" entry (file+headline "supplements.org" "Inbox")
-		 "** %^{SUPP}\n   %<[%Y-%02m-%02d %H:%M]>")))
+		 "** %^{SUPP}\n   %<[%Y-%02m-%02d %H:%M]>")
+
+		;; for new work meetings
+		("m" "GitHub meeting" entry (file+headline "github.org" "Inbox")
+		 "*** %^{MEETING}\n%?\n    [[%^{ZOOM}][zoom link]]")
+
+		;; for org-capture-extension
+
+		("p" "Protocol" entry (file+headline ,(concat org-directory "inbox.org") "Inbox")
+		 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+
+		("L" "Protocol Link" entry (file+headline ,(concat org-directory "inbox.org") "Inbox")
+		 "* %? [[%:link][%:description]] \nCaptured On: %U")))
 
 	(require 'org-tempo)
 

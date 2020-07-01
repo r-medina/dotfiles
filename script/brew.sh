@@ -29,3 +29,4 @@ brew cask install \
      qlstephen \
      quicklook-json \
      viscosity \
+     emacsclient
