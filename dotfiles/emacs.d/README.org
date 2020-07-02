@@ -135,6 +135,17 @@ an attempt to get it documented and in one place.
 				  (if work work-profile personal-profile))
 			  "--remote-debugging-port=9222"
 			  url))))
+
+     (defun make-my-chrome-inter (&optional work)
+       "returns an interactive function that properly calls the my-chrome function"
+       (lexical-let ((work work))
+	 (lambda (start end) (interactive "r")
+		 (my-chrome (if (use-region-p)
+				(let* ((selected (buffer-substring start end))
+				       (prompt (format "? %s" selected)))
+				  (read-string
+				   (format "url: " prompt) prompt))
+			      (read-string "url: ")) work))))
    #+end_src
 
 ** =my-keys-mode-map= setup
@@ -338,9 +349,9 @@ an attempt to get it documented and in one place.
 	(setq org-ellipsis "↩")
 	(setq org-todo-keywords
 	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)" "SKIP(k)")
-		(sequence "WAITING(w)")
-		(sequence "PAUSED(P)")
-		(sequence "MAYBE(m)")
+		(sequence "WAITING(w)" "|")
+		(sequence "PAUSED(P)" "|")
+		(sequence "MAYBE(m)" "|")
 		;; adding this so i can keep todos for tasks
 		(sequence "SCHED(s)" "|" "SKIP(K)")))
 	(setq org-directory "~/notes")
@@ -658,14 +669,10 @@ an attempt to get it documented and in one place.
       ;; experimenting
 
       ;; chrome search for work
-      (define-key m (kbd "C-c . w")
-	(lambda () (interactive)
-	  (my-chrome (read-string "url: ") t)))
+      (define-key m (kbd "C-c . w") (make-my-chrome-inter t))
 
       ;; chrome search for personal
-      (define-key m (kbd "C-c . c")
-	(lambda () (interactive)
-	  (my-chrome (read-string "url: "))))
+      (define-key m (kbd "C-c . c") (make-my-chrome-inter))
 
       ;; opens Joe zoom + facebook page
       (define-key m (kbd "C-c . j")
