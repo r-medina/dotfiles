@@ -9,11 +9,14 @@
 	~/.emacs.d
 	~/.gitconfig
 	~/.gitignore_global
+	~/.oh-my-zsh-custom
     )
 
     ./dotdrop.sh import --profile=home $files
+  #+end_src
 
 * [[https://github.com/r-medina/dotfiles][GitHub Repository]]
+
 
 * Sources
 
