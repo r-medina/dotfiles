@@ -20,6 +20,9 @@ dotfiles:
   f_gitignore_global:
     src: gitignore_global
     dst: ~/.gitignore_global
+  d_gito:
+    src: config/gito
+    dst: ~/.config/gito
 profiles:
   home:
     dotfiles:
@@ -28,3 +31,4 @@ profiles:
     - d_emacs
     - f_gitconfig
     - f_gitignore_global
+    - d_gito

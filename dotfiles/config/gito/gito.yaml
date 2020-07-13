@@ -1,0 +1,9 @@
+workspaces:
+    - name: default
+      path: /Users/ricky
+      aliases:
+        d: dotfiles
+        ghes: enterprise2
+      custom:
+        dotfiles: /Users/ricky/.dotfiles
+        enterprise2: /Users/ricky/gh/enterprise2
