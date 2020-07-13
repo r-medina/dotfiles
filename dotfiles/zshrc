@@ -80,6 +80,7 @@ plugins=(
     goenv
     github-go
     path
+    gito
 
     docker
     git

@@ -348,12 +348,12 @@ an attempt to get it documented and in one place.
 
 	(setq org-ellipsis "↩")
 	(setq org-todo-keywords
-	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)" "SKIP(k)")
+	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)" "NOPE(n)")
 		(sequence "WAITING(w)" "|")
 		(sequence "PAUSED(P)" "|")
 		(sequence "MAYBE(m)" "|")
 		;; adding this so i can keep todos for tasks
-		(sequence "SCHED(s)" "|" "SKIP(K)")))
+		(sequence "SCHED(s)" "|" "DONE(D)" "SKIP(k)")))
 	(setq org-directory "~/notes")
 	(setq org-agenda-files '("~/notes"))
 	(setq org-tag-alist '((:startgrouptag)
@@ -462,7 +462,6 @@ an attempt to get it documented and in one place.
 
 	;; TODO: might not need this actually
 	(require 'ob-shell
-		 :config
 		 (org-babel-do-load-languages
 		  'org-babel-load-languages '((shell . t))))
 
@@ -519,6 +518,8 @@ an attempt to get it documented and in one place.
       (use-package plantuml-mode)
 
       (use-package protobuf-mode)
+
+      (use-package pullover)
 
       (use-package switch-window
 	:bind (:map my-keys-mode-map
