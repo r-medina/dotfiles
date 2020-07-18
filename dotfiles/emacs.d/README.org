@@ -220,7 +220,11 @@ an attempt to get it documented and in one place.
 	(edit-server-start)
 	(setq edit-server-new-frame nil))
 
-      (use-package expand-region) ;; TODO: am i using this?
+      (use-package expand-region
+	:bind
+	(:map my-keys-mode-map
+	      ("C-=" . er/expand-region)
+	      ("C-+" . er/contract-region)))
 
       (use-package flycheck)
 
@@ -352,6 +356,7 @@ an attempt to get it documented and in one place.
 		(sequence "WAITING(w)" "|")
 		(sequence "PAUSED(P)" "|")
 		(sequence "MAYBE(m)" "|")
+		(sequence "WATCH(W)" "|")
 		;; adding this so i can keep todos for tasks
 		(sequence "SCHED(s)" "|" "DONE(D)" "SKIP(k)")))
 	(setq org-directory "~/notes")
@@ -359,6 +364,7 @@ an attempt to get it documented and in one place.
 	(setq org-tag-alist '((:startgrouptag)
 			      ("work" . ?w)
 			      (:grouptags)
+			      ("github" . ?g)
 			      ("meeting" . ?t)
 			      (:endgrouptag)
 			      ("health" . ?h)
@@ -370,8 +376,8 @@ an attempt to get it documented and in one place.
 			      ("zach" . ?z)
 			      (:endgrouptag)
 			      ("personal" . ?p)
-			      ("es" . ?e)
-			      ("email" . ?l)))
+			      ("es" . ?s)
+			      ("email" . ?e)))
 
 	;; refile into any org agenda file
 	(setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
@@ -380,6 +386,8 @@ an attempt to get it documented and in one place.
 	;; log when item was finished
 	;; from https://orgmode.org/manual/Closing-items.html
 	(setq org-log-done 'time)
+
+	(setq org-reverse-note-order t)
 
 	(setq org-capture-templates
 	      '(;; capture template for adding books to reading list - they
@@ -390,34 +398,34 @@ an attempt to get it documented and in one place.
 		;;
 		;;      Some Author
 		("b" "Book" entry (file+headline "books.org" "Inbox")
-		 "** %^{TITLE}\n   %<[%Y-%02m-%02d %H:%M]>\n\n   %^{AUTHOR}%?")
+		 "* %^{TITLE}\n  %U\n\n  %^{AUTHOR}" :prepend t)
 
 		;; articles - we don't add the date as a property because it's not as important here
 		;;
 		;;   * QUEUED [[link][Article Title]]
 		;;     [2020-16-24]
 		("a" "Article" entry (file "articles.org")
-		 "* QUEUED [[%^{LINK}][%^{TITLE}]]\n  %<[%Y-%02m-%02d %H:%M]>%?")
+		 "* QUEUED [[%^{LINK}][%^{TITLE}]]\n  %U%?" :prepend t)
 
 		;; just uncategorized things to go into inbox
 		;;
 		;;   * the thing
 		;;     [2020-06-24]
 		("i" "Inbox" entry (file "inbox.org")
-		 "* %^{ITEM}\n  %<[%Y-%02m-%02d %H:%M]>%?")
+		 "* %^{ITEM}\n  %U%?" :prepend t)
 
 		;; capture project ideas
 		;;
 		;; ** the project idea
 		;;    [2020-06-79]
 		("P" "Project" entry (file+headline "projects.org" "Ideas")
-		 "** %^{PROJECT}\n   %<[%Y-%02m-%02d %H:%M]>%?")
+		 "* %^{PROJECT}\n  %U%?" :prepend t)
 
 		;; quotes!
 		;; * the quote
 		;;   [2020-04-11]
 		("q" "Quote" entry (file "quotes.org")
-		 "* %^{QUOTE}\n  %<[%Y-%02m-%02d %H:%M]>\n  %^{WHO}%?")
+		 "* %^{QUOTE}\n  %U\n  %^{WHO}%?" :prepend t)
 
 		;; vocabulary words
 		;;
@@ -425,32 +433,55 @@ an attempt to get it documented and in one place.
 		;;   [2020-04-30]
 		;;   definition
 		("v" "Vocab" entry (file "vocab.org")
-		 "* %^{Word}\n  %<[%Y-%02m-%02d %H:%M]>\n  %^{DEF}%?")
+		 "* %^{Word}\n  %U\n  %^{DEF}%?")
 
 		;; for new supplements to evaluate
 		;; ** supplement
 		;;    [2020-01-11]
 		("s" "Supplement" entry (file+headline "supplements.org" "Inbox")
-		 "** %^{SUPP}\n   %<[%Y-%02m-%02d %H:%M]>")
+		 "* %^{SUPP}\n  %U")
 
-		;; for new work meetings
-		("m" "GitHub meeting" entry (file+headline "github.org" "Inbox")
-		 "*** %^{MEETING}\n%?\n    [[%^{ZOOM}][zoom link]]")
+		;; new work meetings
+		("c" "Calendar")
 
-		;; for org-capture-extension
+		("cg" "GitHub Meeting")
+		("cgr" "recurring" entry (file+olp "github.org" "Meetings" "Recurring")
+		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}\n"
+		 :prepend t)
+		("cgo" "one off" entry (file+olp "github.org" "Meetings" "One Offs")
+		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}\n"
+		 :prepend t)
 
-		("p" "Protocol" entry (file+headline ,(concat org-directory "inbox.org") "Inbox")
+		("cp" "Personal Event")
+		("cpr" "recurring" entry (file+olp "me.org" "Calendar" "Recurring")
+		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?"
+		 :prepend t)
+		("cpo" "one off" entry (file+olp "me.org" "Calendar" "One Offs")
+		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?"
+		 :prepend t)
+
+		;; essay ideas
+		("e" "Essay Idea" entry (file+headline "essays.org" "Ideas")
+		 "* %^{IDEA}\n  %U%?" :prepend t)
+
+		("d" "Dailies" entry (file+datetree "me.org")
+		 "%^{NOTE}\n  %U" :prepend t)
+
+		;; for org-capture-extension ;; TODO
+
+		("p" "Protocol" entry (file+headline "inbox.org" "Inbox")
 		 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
 
-		("L" "Protocol Link" entry (file+headline ,(concat org-directory "inbox.org") "Inbox")
+		("L" "Protocol Link" entry (file+headline "inbox.org" "Inbox")
 		 "* %? [[%:link][%:description]] \nCaptured On: %U")))
 
 	(require 'org-tempo)
 
-	;; ;; TODO
-	;; ;; (use-package helm-org
-	;; ;;   :config
-	;; ;;   (add-to-list 'helm-completing-read-handlers-alist '(org-capture . helm-org-completing-read-tags)))
+	(use-package org-pomodoro
+	  :config
+	  (setq org-pomodoro-length 15)
+	  (setq org-pomodoro-long-break-frequency 4)
+	  (setq org-pomodoro-manual-break t))
 
 	(use-package org-bullets
 	  :hook (org-mode . (lambda () (org-bullets-mode 1))))
@@ -464,6 +495,8 @@ an attempt to get it documented and in one place.
 	(require 'ob-shell
 		 (org-babel-do-load-languages
 		  'org-babel-load-languages '((shell . t))))
+
+	(use-package ox-hugo)
 
 	(use-package ox-reveal
 	  :config
@@ -580,11 +613,11 @@ an attempt to get it documented and in one place.
 
 *** Run it
     #+begin_src emacs-lisp
-      (ignore-errors (el-get-self-update)) ;; maybe bring this back?
+      ;; (ignore-errors (el-get-self-update)) ;; maybe bring this back?
       ;; (el-get-update-all)
-      (el-get-cleanup my-packages) ;; deletes no-longer-listed packages
+      ;; (el-get-cleanup my-packages) ;; deletes no-longer-listed packages
 
-      (el-get 'sync my-packages)
+      ;; (el-get 'sync my-packages)
     #+end_src
 
 
@@ -773,7 +806,7 @@ an attempt to get it documented and in one place.
 
     ;; Font and frame size
     (set-face-font 'default "Monaco Light 13")
-    (setq-default line-spacing 4)
+    (setq-default line-spacing 5)
 
     ;; Underline line at descent position, not baseline position
     (setq x-underline-at-descent-line t)
@@ -820,3 +853,7 @@ an attempt to get it documented and in one place.
     (setq window-divider-default-places 'right-only)
     (window-divider-mode)
   #+end_src
+
+* TODOs
+
+** TODO move the last few packages out of el-get
