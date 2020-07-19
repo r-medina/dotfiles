@@ -69,8 +69,8 @@
  '(org-roam-server-mode t)
  '(package-selected-packages
    (quote
-    (ox-hugo org-variable-pitch org-pomodoro org-beautify-theme pullover atomic-chrome edit-server golint gotest go-test go-rename use-package)))
- '(perfect-margin-mode nil)
+    (org-reverse-datetree ox-hugo org-variable-pitch org-pomodoro org-beautify-theme pullover atomic-chrome edit-server golint gotest go-test go-rename use-package)))
+ '(perfect-margin-mode t)
  '(tramp-syntax (quote simplified) nil (tramp)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

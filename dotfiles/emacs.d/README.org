@@ -446,10 +446,10 @@ an attempt to get it documented and in one place.
 
 		("cg" "GitHub Meeting")
 		("cgr" "recurring" entry (file+olp "github.org" "Meetings" "Recurring")
-		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}\n"
+		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}"
 		 :prepend t)
 		("cgo" "one off" entry (file+olp "github.org" "Meetings" "One Offs")
-		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}\n"
+		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}"
 		 :prepend t)
 
 		("cp" "Personal Event")
@@ -464,13 +464,13 @@ an attempt to get it documented and in one place.
 		("e" "Essay Idea" entry (file+headline "essays.org" "Ideas")
 		 "* %^{IDEA}\n  %U%?" :prepend t)
 
-		("d" "Dailies" entry (file+datetree "me.org")
-		 "%^{NOTE}\n  %U" :prepend t)
+		("d" "Dailies" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
+		 "* %?")
 
 		;; for org-capture-extension ;; TODO
 
 		("p" "Protocol" entry (file+headline "inbox.org" "Inbox")
-		 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+		 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?")
 
 		("L" "Protocol Link" entry (file+headline "inbox.org" "Inbox")
 		 "* %? [[%:link][%:description]] \nCaptured On: %U")))
@@ -482,6 +482,13 @@ an attempt to get it documented and in one place.
 	  (setq org-pomodoro-length 15)
 	  (setq org-pomodoro-long-break-frequency 4)
 	  (setq org-pomodoro-manual-break t))
+
+	(use-package org-reverse-datetree
+	  :config
+	  (setq-default org-reverse-datetree-level-formats
+			'("%Y"
+			  "%Y-%m %B"
+			  "%Y-%m-%d %A")))
 
 	(use-package org-bullets
 	  :hook (org-mode . (lambda () (org-bullets-mode 1))))

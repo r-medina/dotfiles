@@ -1,6 +1,5 @@
 paths=(
 	$HOME/bin
-	$GOPATH/bin
 )
 
 for dir in $paths; do
