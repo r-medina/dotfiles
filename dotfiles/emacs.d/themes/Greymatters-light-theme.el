@@ -91,7 +91,7 @@
         `(org-footnote  ((,class (:underline t :foreground ,fg4))))
         `(org-link ((,class (:underline t :foreground ,type ))))
         `(org-special-keyword ((,class (:foreground ,func))))
-        `(org-block ((,class (:foreground ,fg3))))
+        ;; `(org-block ((,class (:foreground ,fg3))))
         `(org-quote ((,class (:inherit org-block :slant italic))))
         `(org-verse ((,class (:inherit org-block :slant italic))))
         `(org-todo ((,class (:box (:line-width 1 :color ,fg3) :foreground ,keyword :bold t))))
@@ -245,7 +245,8 @@
 
 	`(face-faded ((,class (:foreground ,faded-fg))))
 	`(face-subtle ((,class (:background ,subtle-bg :foreground ,faded-fg))))
-	`(org-table ((,class (:background ,subtle-bg :foreground ,faded-fg))))))
+	`(org-table ((,class (:background ,subtle-bg :foreground ,faded-fg))))
+	`(org-block ((,class (:background ,subtle-bg))))))
 
 ;;;###autoload
 (when load-file-name

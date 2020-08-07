@@ -161,7 +161,7 @@ an attempt to get it documented and in one place.
 
   A lot of the following was taken from [[https://github.com/hrs/dotfiles/blob/master/emacs/dot-emacs.d/init.el][this config]].
 
-** The almighty =use-package=:
+** The almighty use-package:
 
    This installs it and updates package list just in case
 
@@ -350,17 +350,11 @@ an attempt to get it documented and in one place.
 
 	(set-time-zone-rule "/usr/share/zoneinfo/America/New_York")
 
-	(setq org-ellipsis "↩")
-	(setq org-todo-keywords
-	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)" "NOPE(n)")
-		(sequence "WAITING(w)" "|")
-		(sequence "PAUSED(P)" "|")
-		(sequence "MAYBE(m)" "|")
-		(sequence "WATCH(W)" "|")
-		;; adding this so i can keep todos for tasks
-		(sequence "SCHED(s)" "|" "DONE(D)" "SKIP(k)")))
 	(setq org-directory "~/notes")
 	(setq org-agenda-files '("~/notes"))
+
+	(setq org-ellipsis "↩")
+
 	(setq org-tag-alist '((:startgrouptag)
 			      ("work" . ?w)
 			      (:grouptags)
@@ -377,10 +371,70 @@ an attempt to get it documented and in one place.
 			      (:endgrouptag)
 			      ("personal" . ?p)
 			      ("es" . ?s)
+			      ;; ("readme" . ?r)
 			      ("email" . ?e)))
+
+	(use-package org-ref)
+
+	;; TODO: some of the reading stuff?
+	(setq org-todo-keywords
+	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)" "NOPE(n)" "SKIP(K)")
+		(sequence "WAITING(w)" "|")
+		(sequence "PAUSED(P)" "|")
+		(sequence "MAYBE(m)" "|")
+		(sequence "WATCH(W)" "|")
+		;; adding this so i can keep todos for tasks
+		(sequence "SCHED(s)" "|" "DONE(D)" "SKIP(k)")))
+
+	(setq org-super-agenda-groups
+	      '((:name "Scheduled"	  ; Optionally specify section name
+		       :time-grid t	  ; Items that appear on the time grid
+		       :scheduled today
+		       :deadline today)
+
+		(:name "Started"
+		       :and (:todo ("WAITING" "IN PROGRESS")))
+
+		(:name "Work Overdue"
+		       :and (:tag "work" :scheduled past)
+		       :and (:tag "work" :deadline past)
+		       :order :auto-todo)
+
+		(:name "Other Overdue"
+		       :scheduled past
+		       :deadline past
+		       :order :auto-todo)
+
+		(:name "Reading"
+		       :todo ("QUEUED" "READING" "NOTES"))))
+
+	(use-package org-super-agenda
+	  :config
+	  (org-super-agenda-mode))
+
+	(use-package org-ql
+	  :quelpa (org-ql :fetcher github :repo "alphapapa/org-ql")
+	  :config
+	  (defun org-ql-agenda ()
+	    (interactive)
+	    (org-ql-search (org-agenda-files)
+	      '(or
+		(todo
+		 ;; TODO maybe do (not (done))?
+		 "TODO" "IN PROGRESS" "WAITING" "SCHED" "QUEUED" "NOTES")
+		(and (ts-a) (not (done))))
+	      :title "My Agenda View"
+	      :super-groups org-super-agenda-groups))
+
+	  (setq org-agenda-custom-commands
+		'(("r" "Custom View"
+		   ((org-ql-block '(or (todo
+					"TODO" "IN PROGRESS" "WAITING" "SCHED" "QUEUED" "NOTES")
+				       (and (ts-a) (not (done))))))))))
 
 	;; refile into any org agenda file
 	(setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
+	(setq org-refile-use-outline-path 'file)
 	(setq org-outline-path-complete-in-steps nil)
 
 	;; log when item was finished
@@ -398,14 +452,14 @@ an attempt to get it documented and in one place.
 		;;
 		;;      Some Author
 		("b" "Book" entry (file+headline "books.org" "Inbox")
-		 "* %^{TITLE}\n  %U\n\n  %^{AUTHOR}" :prepend t)
+		 "* TODO %^{TITLE}\n  %U\n\n  %^{AUTHOR}" :prepend t)
 
 		;; articles - we don't add the date as a property because it's not as important here
 		;;
 		;;   * QUEUED [[link][Article Title]]
 		;;     [2020-16-24]
 		("a" "Article" entry (file "articles.org")
-		 "* QUEUED [[%^{LINK}][%^{TITLE}]]\n  %U%?" :prepend t)
+		 "* QUEUED %^{TITLE}\n  %U\n  %^{LINK}%?" :prepend t)
 
 		;; just uncategorized things to go into inbox
 		;;
@@ -465,7 +519,7 @@ an attempt to get it documented and in one place.
 		 "* %^{IDEA}\n  %U%?" :prepend t)
 
 		("d" "Dailies" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
-		 "* %?")
+		 "* %?" :prepend t)
 
 		;; for org-capture-extension ;; TODO
 
@@ -504,6 +558,7 @@ an attempt to get it documented and in one place.
 		  'org-babel-load-languages '((shell . t))))
 
 	(use-package ox-hugo)
+	(use-package ox-pandoc)
 
 	(use-package ox-reveal
 	  :config
@@ -536,6 +591,12 @@ an attempt to get it documented and in one place.
 	:config
 	(setq org-roam-directory "~/notes")
 	(setq org-roam-server-mode t))
+
+      (use-package org-roam-bibtex
+	:after org-roam
+	:hook (org-roam-mode . org-roam-bibtex-mode)
+	:bind (:map org-mode-map
+		    (("C-c n a" . orb-note-actions))))
 
       (use-package paredit
 	:hook
@@ -860,6 +921,7 @@ an attempt to get it documented and in one place.
     (setq window-divider-default-places 'right-only)
     (window-divider-mode)
   #+end_src
+
 
 * TODOs
 
