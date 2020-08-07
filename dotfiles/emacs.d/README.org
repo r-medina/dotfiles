@@ -397,13 +397,11 @@ an attempt to get it documented and in one place.
 
 		(:name "Work Overdue"
 		       :and (:tag "work" :scheduled past)
-		       :and (:tag "work" :deadline past)
-		       :order :auto-todo)
+		       :and (:tag "work" :deadline past))
 
 		(:name "Other Overdue"
 		       :scheduled past
-		       :deadline past
-		       :order :auto-todo)
+		       :deadline past)
 
 		(:name "Reading"
 		       :todo ("QUEUED" "READING" "NOTES"))))
@@ -415,17 +413,6 @@ an attempt to get it documented and in one place.
 	(use-package org-ql
 	  :quelpa (org-ql :fetcher github :repo "alphapapa/org-ql")
 	  :config
-	  (defun org-ql-agenda ()
-	    (interactive)
-	    (org-ql-search (org-agenda-files)
-	      '(or
-		(todo
-		 ;; TODO maybe do (not (done))?
-		 "TODO" "IN PROGRESS" "WAITING" "SCHED" "QUEUED" "NOTES")
-		(and (ts-a) (not (done))))
-	      :title "My Agenda View"
-	      :super-groups org-super-agenda-groups))
-
 	  (setq org-agenda-custom-commands
 		'(("r" "Custom View"
 		   ((org-ql-block '(or (todo
