@@ -136,16 +136,34 @@ an attempt to get it documented and in one place.
 			  "--remote-debugging-port=9222"
 			  url))))
 
-     (defun make-my-chrome-inter (&optional work)
+     (defun my-chrome-personal (url)
+       "opens Google chrome with my personal profile"
+       (save-window-excursion
+	 (start-process "my-chrome-process" nil
+			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+			"--profile-directory=Profile 2"
+			"--remote-debugging-port=9222"
+			url)))
+
+     (defun my-chrome-work (url)
+       "opens Google chrome with my work profile"
+       (save-window-excursion
+	 (start-process "my-chrome-process" nil
+			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+			"--profile-directory=Profile 3"
+			"--remote-debugging-port=9222"
+			url)))
+
+     (defun make-my-chrome-inter (chrome-fn)
        "returns an interactive function that properly calls the my-chrome function"
-       (lexical-let ((work work))
-	 (lambda (start end) (interactive "r")
-		 (my-chrome (if (use-region-p)
-				(let* ((selected (buffer-substring start end))
-				       (prompt (format "? %s" selected)))
-				  (read-string
-				   (format "url: " prompt) prompt))
-			      (read-string "url: ")) work))))
+       (lambda (start end) (interactive "r")
+	 (chrome-fn (if (use-region-p)
+			(let* ((selected (buffer-substring start end))
+			       (prompt (format "? %s" selected)))
+			  (read-string
+			   (format "url: " prompt) prompt))
+		      (read-string "url: ")))))
+
    #+end_src
 
 ** =my-keys-mode-map= setup
@@ -329,7 +347,6 @@ an attempt to get it documented and in one place.
 
       (use-package org
 	:ensure org-plus-contrib
-	:commands (org-mac-iCal)
 	:mode ("\\.org\\'" . org-mode)
 	:hook
 	(org-mode . flyspell-mode)
@@ -371,7 +388,7 @@ an attempt to get it documented and in one place.
 			      (:endgrouptag)
 			      ("personal" . ?p)
 			      ("es" . ?s)
-			      ;; ("readme" . ?r)
+			      ("readme" . ?r)
 			      ("email" . ?e)))
 
 	(use-package org-ref)
@@ -382,12 +399,11 @@ an attempt to get it documented and in one place.
 		(sequence "WAITING(w)" "|")
 		(sequence "PAUSED(P)" "|")
 		(sequence "MAYBE(m)" "|")
-		(sequence "WATCH(W)" "|")
-		;; adding this so i can keep todos for tasks
-		(sequence "SCHED(s)" "|" "DONE(D)" "SKIP(k)")))
+		(sequence "WATCH(W)" "|")))
 
 	(setq org-super-agenda-groups
-	      '((:name "Scheduled"	  ; Optionally specify section name
+	      '((:auto-group t)
+		(:name "Scheduled"	  ; Optionally specify section name
 		       :time-grid t	  ; Items that appear on the time grid
 		       :scheduled today
 		       :deadline today)
@@ -417,7 +433,11 @@ an attempt to get it documented and in one place.
 		'(("r" "Custom View"
 		   ((org-ql-block '(or (todo
 					"TODO" "IN PROGRESS" "WAITING" "SCHED" "QUEUED" "NOTES")
-				       (and (ts-a) (not (done))))))))))
+				       (and (ts-a) (not (done)))))))
+		  ("R" "README"
+		   ((org-ql-block '(and (not (tags "work"))
+					(or (tags "readme")
+					    (todo "READING" "QUEUED" "NOTES")))))))))
 
 	;; refile into any org agenda file
 	(setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
@@ -446,7 +466,7 @@ an attempt to get it documented and in one place.
 		;;   * QUEUED [[link][Article Title]]
 		;;     [2020-16-24]
 		("a" "Article" entry (file "articles.org")
-		 "* QUEUED %^{TITLE}\n  %U\n  %^{LINK}%?" :prepend t)
+		 "* QUEUED %^{TITLE}\n  SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)\n  %U\n  %^{LINK}%?" :prepend t)
 
 		;; just uncategorized things to go into inbox
 		;;
@@ -631,9 +651,6 @@ an attempt to get it documented and in one place.
 		    ("C-c y" . yas-expand)))
     #+end_src
 
-**** TODO make a macro to encapsulate =:bind (:map my-key-mode-map)=
-
-
 ** el-get
 
    https://github.com/dimitri/el-get
@@ -696,7 +713,7 @@ an attempt to get it documented and in one place.
     (show-paren-mode t)
 
     ;; fixing scrolling behavior to be less jumpy
-    (setq scroll-step 1)
+    (setq scroll-step .1)
     (setq scroll-conservatively 10000)
     (setq auto-window-vscroll nil)
   #+end_src
@@ -758,10 +775,10 @@ an attempt to get it documented and in one place.
       ;; experimenting
 
       ;; chrome search for work
-      (define-key m (kbd "C-c . w") (make-my-chrome-inter t))
+      (define-key m (kbd "C-c . w") (make-my-chrome-inter) nil)
 
       ;; chrome search for personal
-      (define-key m (kbd "C-c . c") (make-my-chrome-inter))
+      (define-key m (kbd "C-c . c") (make-my-chrome-inter nil
 
       ;; opens Joe zoom + facebook page
       (define-key m (kbd "C-c . j")
@@ -902,7 +919,6 @@ an attempt to get it documented and in one place.
     (setq-default header-line-format mode-line-format)
     (setq-default mode-line-format'(""))
 
-
     ;; Vertical window divider
     (setq window-divider-default-right-width 3)
     (setq window-divider-default-places 'right-only)
@@ -911,5 +927,10 @@ an attempt to get it documented and in one place.
 
 
 * TODOs
+
+** TODO make a macro to encapsulate =:bind (:map my-key-mode-map)=
+** TODO fix my-chrome!
+   SCHEDULED: <2020-08-15 Sat>
+   [2020-08-12 Wed]
 
 ** TODO move the last few packages out of el-get

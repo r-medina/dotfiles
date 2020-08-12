@@ -30,7 +30,8 @@
  (deftheme Greymatters-light)
  (let ((class '((class color) (min-colors 89)))
        (faded-fg "#737373")
-       (subtle-bg "#f0f0f0")
+       (more-faded-fg "#808080")
+       (subtle-bg "#dbdbdb")
        (fg1 "#2f2f2f")
        (fg2 "#404040")
        (fg3 "#505050")
@@ -246,7 +247,9 @@
 	`(face-faded ((,class (:foreground ,faded-fg))))
 	`(face-subtle ((,class (:background ,subtle-bg :foreground ,faded-fg))))
 	`(org-table ((,class (:background ,subtle-bg :foreground ,faded-fg))))
-	`(org-block ((,class (:background ,subtle-bg))))))
+	`(org-block ((,class (:background ,subtle-bg :extend t))))
+	`(org-block-begin-line ((,class (:foreground ,more-faded-fg))))
+	))
 
 ;;;###autoload
 (when load-file-name

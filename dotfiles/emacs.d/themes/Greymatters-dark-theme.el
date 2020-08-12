@@ -31,7 +31,8 @@
  (let ((class '((class color) (min-colors 89)))
        (cursor-bg "#77bdbf")
        (faded-fg "#aab3b1")
-       (subtle-bg "#4f4f4f")
+       (more-faded-fg "#737a78")
+       (subtle-bg "#363636")
        (fg1 "#d1d1d1")
        (fg2 "#c0c0c0")
        (fg3 "#b0b0b0")
@@ -249,7 +250,8 @@
 	`(face-faded ((,class (:foreground ,faded-fg))))
 	`(face-subtle ((,class (:background ,subtle-bg :foreground ,faded-fg))))
 	`(org-table ((,class (:background ,subtle-bg :foreground ,faded-fg))))
-        `(org-block ((,class (:background ,subtle-bg))))
+        `(org-block ((,class (:background ,subtle-bg :extend t))))
+	`(org-block-begin-line ((,class (:foreground ,more-faded-fg))))
 	))
 
 ;;;###autoload
