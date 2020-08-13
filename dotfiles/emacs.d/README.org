@@ -41,6 +41,7 @@ an attempt to get it documented and in one place.
 
    Cursor color:
    #+begin_src emacs-lisp
+     (message "hi")
      (set-cursor-color "#77bdbf")
    #+end_src
 
@@ -136,34 +137,16 @@ an attempt to get it documented and in one place.
 			  "--remote-debugging-port=9222"
 			  url))))
 
-     (defun my-chrome-personal (url)
-       "opens Google chrome with my personal profile"
-       (save-window-excursion
-	 (start-process "my-chrome-process" nil
-			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-			"--profile-directory=Profile 2"
-			"--remote-debugging-port=9222"
-			url)))
-
-     (defun my-chrome-work (url)
-       "opens Google chrome with my work profile"
-       (save-window-excursion
-	 (start-process "my-chrome-process" nil
-			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-			"--profile-directory=Profile 3"
-			"--remote-debugging-port=9222"
-			url)))
-
-     (defun make-my-chrome-inter (chrome-fn)
+     (defun make-my-chrome-inter (&optional work)
        "returns an interactive function that properly calls the my-chrome function"
-       (lambda (start end) (interactive "r")
-	 (chrome-fn (if (use-region-p)
-			(let* ((selected (buffer-substring start end))
-			       (prompt (format "? %s" selected)))
-			  (read-string
-			   (format "url: " prompt) prompt))
-		      (read-string "url: ")))))
-
+       (lexical-let ((work work))
+	 (lambda (start end) (interactive "r")
+	   (my-chrome (if (use-region-p)
+			  (let* ((selected (buffer-substring start end))
+				 (prompt (format "? %s" selected)))
+			    (read-string
+			     (format "url: " prompt) prompt))
+			(read-string "url: ")) work))))
    #+end_src
 
 ** =my-keys-mode-map= setup
@@ -389,13 +372,23 @@ an attempt to get it documented and in one place.
 			      ("personal" . ?p)
 			      ("es" . ?s)
 			      ("readme" . ?r)
-			      ("email" . ?e)))
+			      ("email" . ?e)
+			      (:startgrouptag)
+			      ("essays")
+			      (:grouptags)
+			      ("health")
+			      ("life")
+			      ("technology")
+			      ("random")
+			      ("golang")
+			      ("programming")
+			      (:endgrouptag)))
 
 	(use-package org-ref)
 
 	;; TODO: some of the reading stuff?
 	(setq org-todo-keywords
-	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)" "NOPE(n)" "SKIP(K)")
+	      '((sequence "TODO(t)" "IN PROGRESS(p)" "|" "DONE(d)" "NOPE(n)" "SKIP(k)")
 		(sequence "WAITING(w)" "|")
 		(sequence "PAUSED(P)" "|")
 		(sequence "MAYBE(m)" "|")
@@ -486,7 +479,7 @@ an attempt to get it documented and in one place.
 		;; * the quote
 		;;   [2020-04-11]
 		("q" "Quote" entry (file "quotes.org")
-		 "* %^{QUOTE}\n  %U\n  %^{WHO}%?" :prepend t)
+		 "* %^{QUOTE}\n  %U\n\n  %^{WHO}%?" :prepend t)
 
 		;; vocabulary words
 		;;
@@ -713,7 +706,7 @@ an attempt to get it documented and in one place.
     (show-paren-mode t)
 
     ;; fixing scrolling behavior to be less jumpy
-    (setq scroll-step .1)
+    (setq scroll-step 1)
     (setq scroll-conservatively 10000)
     (setq auto-window-vscroll nil)
   #+end_src
@@ -775,10 +768,10 @@ an attempt to get it documented and in one place.
       ;; experimenting
 
       ;; chrome search for work
-      (define-key m (kbd "C-c . w") (make-my-chrome-inter) nil)
+      (define-key m (kbd "C-c . w") (make-my-chrome-inter t))
 
       ;; chrome search for personal
-      (define-key m (kbd "C-c . c") (make-my-chrome-inter nil
+      (define-key m (kbd "C-c . c") (make-my-chrome-inter nil))
 
       ;; opens Joe zoom + facebook page
       (define-key m (kbd "C-c . j")
