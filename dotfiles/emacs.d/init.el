@@ -64,11 +64,10 @@
  '(global-hl-line-mode t)
  '(hscroll-margin 8)
  '(hscroll-step 1)
- '(org-agenda-files
-   '("/Users/ricky/notes/20200520182622-org_roam.org" "/Users/ricky/notes/20200520190206-org_mode.org" "/Users/ricky/notes/20200521120244-roam.org" "/Users/ricky/notes/20200521162530-dotfiles.org" "/Users/ricky/notes/20200524111223-marketing.org" "/Users/ricky/notes/20200524145601-voxbox.org" "/Users/ricky/notes/20200524151408-github_com_pion_webrtc.org" "/Users/ricky/notes/20200524161045-distributed_systems.org" "/Users/ricky/notes/20200524183413-engineering_success.org" "/Users/ricky/notes/20200526142341-computer_setup.org" "/Users/ricky/notes/20200526142520-zsh.org" "/Users/ricky/notes/20200526192638-emacs.org" "/Users/ricky/notes/20200527113921-mysql.org" "/Users/ricky/notes/20200527123204-object_storage.org" "/Users/ricky/notes/20200528112512-minio.org" "/Users/ricky/notes/20200528120600-ghes.org" "/Users/ricky/notes/20200528190438-chrome_el.org" "/Users/ricky/notes/20200602122131-anti_racism.org" "/Users/ricky/notes/20200604210440-quotes.org" "/Users/ricky/notes/20200606145854-prom2collectd.org" "/Users/ricky/notes/20200608100500-reviews.org" "/Users/ricky/notes/20200610164517-golang.org" "/Users/ricky/notes/20200716142439-hugo.org" "/Users/ricky/notes/README.org" "/Users/ricky/notes/articles.org" "/Users/ricky/notes/books.org" "/Users/ricky/notes/emacs-config.org" "/Users/ricky/notes/essays.org" "/Users/ricky/notes/github.org" "/Users/ricky/notes/gito.org" "/Users/ricky/notes/inbox.org" "/Users/ricky/notes/me.org" "/Users/ricky/notes/projects.org" "/Users/ricky/notes/quotes.org" "/Users/ricky/notes/resume.org" "/Users/ricky/notes/rules.org" "/Users/ricky/notes/supplements.org" "/Users/ricky/notes/vocab.org"))
+ '(org-agenda-files '("~/notes"))
  '(org-roam-server-mode t)
  '(package-selected-packages
-   '(org-roam-bibtex org-ref ox-pandoc org-reverse-datetree ox-hugo org-variable-pitch org-pomodoro org-beautify-theme pullover atomic-chrome edit-server golint gotest go-test go-rename use-package))
+   '(go-imports org-roam-bibtex org-ref ox-pandoc org-reverse-datetree ox-hugo org-variable-pitch org-pomodoro org-beautify-theme pullover atomic-chrome edit-server golint gotest go-test go-rename use-package))
  '(perfect-margin-mode nil)
  '(tramp-syntax 'simplified nil (tramp)))
 (custom-set-faces

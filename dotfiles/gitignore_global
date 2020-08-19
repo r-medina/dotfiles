@@ -1,2 +1,4 @@
 .DS_Store
 .idea/
+.go-imports-packages.el
+.go-imports-packages.el-errors

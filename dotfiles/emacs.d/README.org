@@ -41,7 +41,6 @@ an attempt to get it documented and in one place.
 
    Cursor color:
    #+begin_src emacs-lisp
-     (message "hi")
      (set-cursor-color "#77bdbf")
    #+end_src
 
@@ -247,6 +246,7 @@ an attempt to get it documented and in one place.
 	(go-mode . lsp-deferred)
 	(before-save . gofmt-before-save)
 	:config
+	(setq gofmt-command "goimports")
 	(use-package flycheck-gometalinter
 	  :config
 	  (setq flycheck-gometalinter-fast t)
@@ -255,13 +255,13 @@ an attempt to get it documented and in one place.
 	(use-package go-rename)
 	(use-package gotest)
 	(use-package golint)
+	(use-package go-imports)
 	(use-package go-guru
 	  :ensure t
 	  :hook
 	  (go-mode  . go-guru-hl-identifier-mode)
 	  :config
 	  (setq go-guru-hl-identifier-idle-time .1)))
-      ;; additional go packages are in el-get
 
       (use-package golden-ratio
 	:config
@@ -378,9 +378,11 @@ an attempt to get it documented and in one place.
 			      (:grouptags)
 			      ("health")
 			      ("life")
+			      ("learning")
 			      ("technology")
 			      ("random")
 			      ("golang")
+			      ("identity")
 			      ("programming")
 			      (:endgrouptag)))
 
@@ -425,7 +427,7 @@ an attempt to get it documented and in one place.
 	  (setq org-agenda-custom-commands
 		'(("r" "Custom View"
 		   ((org-ql-block '(or (todo
-					"TODO" "IN PROGRESS" "WAITING" "SCHED" "QUEUED" "NOTES")
+					"TODO" "IN PROGRESS" "WAITING" "SCHED" "QUEUED" "NOTES" "")
 				       (and (ts-a) (not (done)))))))
 		  ("R" "README"
 		   ((org-ql-block '(and (not (tags "work"))
@@ -440,6 +442,7 @@ an attempt to get it documented and in one place.
 	;; log when item was finished
 	;; from https://orgmode.org/manual/Closing-items.html
 	(setq org-log-done 'time)
+	(setq org-log-into-drawer t)
 
 	(setq org-reverse-note-order t)
 
@@ -472,7 +475,7 @@ an attempt to get it documented and in one place.
 		;;
 		;; ** the project idea
 		;;    [2020-06-79]
-		("P" "Project" entry (file+headline "projects.org" "Ideas")
+		("p" "Project" entry (file+headline "projects.org" "Ideas")
 		 "* %^{PROJECT}\n  %U%?" :prepend t)
 
 		;; quotes!
@@ -500,18 +503,18 @@ an attempt to get it documented and in one place.
 
 		("cg" "GitHub Meeting")
 		("cgr" "recurring" entry (file+olp "github.org" "Meetings" "Recurring")
-		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}"
+		 "* %^{MEETING}\n SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}\n"
 		 :prepend t)
 		("cgo" "one off" entry (file+olp "github.org" "Meetings" "One Offs")
-		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}"
+		 "* %^{MEETING}\n SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}\n"
 		 :prepend t)
 
 		("cp" "Personal Event")
 		("cpr" "recurring" entry (file+olp "me.org" "Calendar" "Recurring")
-		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?"
+		 "* %^{MEETING}\n SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n"
 		 :prepend t)
 		("cpo" "one off" entry (file+olp "me.org" "Calendar" "One Offs")
-		 "* %^{MEETING}\nSCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?"
+		 "* %^{MEETING}\n SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)\n%?"
 		 :prepend t)
 
 		;; essay ideas
@@ -672,8 +675,7 @@ an attempt to get it documented and in one place.
 	    '(;; atom-dark-theme
 	      chrome.el
 	      ;; emacs-powerline
-	      go-mod
-	      go-imports))
+	      go-mod))
     #+end_src
 
 *** Run it
