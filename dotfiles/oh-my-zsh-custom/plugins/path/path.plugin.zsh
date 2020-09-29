@@ -1,5 +1,6 @@
 paths=(
 	$HOME/bin
+	$HOME/gh/github/bin
 )
 
 for dir in $paths; do

@@ -16,9 +16,6 @@ alias uncut='cut --complement'
 # colors
 alias tree='tree -C'
 
-# experimenting with emacs as separate program
-# alias emacs='te'
-
 # kill clients, kill daemon, let em know
 # needs `;` after first command because pkill returns 1 if no processes
 alias emacskill="pkill emacsclient; emacsclient -e '(kill-emacs)' && echo 'killed emacs daemon'"
@@ -28,3 +25,5 @@ alias opsignin='eval $(op signin my)'
 ## GitHub
 
 alias dev="vc github-iad-devvpn"
+
+alias nr='gpen nr'

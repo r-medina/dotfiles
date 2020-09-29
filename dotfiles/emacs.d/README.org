@@ -148,7 +148,7 @@ an attempt to get it documented and in one place.
 			(read-string "url: ")) work))))
    #+end_src
 
-** =my-keys-mode-map= setup
+** my-keys-mode-map setup
 
    More on this later:
    #+begin_src emacs-lisp
@@ -194,6 +194,27 @@ an attempt to get it documented and in one place.
 	:bind (:map my-keys-mode-map
 		    ("C-c C-f" . bufler)))
 
+      ;; https://github.com/ShardeDeLane/doom-emacs/blob/e7fa8750c2ea8d74b75e4a5b47f31639394aac37/modules/app/calendar/config.el
+      (use-package calfw
+	:bind (:map my-keys-mode-map
+		    ("C-%" . cfw:open-org-calendar))
+	:config
+	;; better frame for calendar
+	(setq cfw:face-item-separator-color nil
+	      cfw:render-line-breaker 'cfw:render-line-breaker-none
+	      cfw:fchar-junction ?╋
+	      cfw:fchar-vertical-line ?┃
+	      cfw:fchar-horizontal-line ?━
+	      cfw:fchar-left-junction ?┣
+	      cfw:fchar-right-junction ?┫
+	      cfw:fchar-top-junction ?┯
+	      cfw:fchar-top-left-corner ?┏
+	      cfw:fchar-top-right-corner ?┓)
+
+	(define-key cfw:calendar-mode-map "q" #'+calendar/quit))
+
+      (use-package calfw-org)
+
       (use-package company
 	:hook (after-init . global-company-mode)
 	:config
@@ -202,8 +223,9 @@ an attempt to get it documented and in one place.
 	(setq company-minimum-prefix-length 1)
 	;; aligns fields in completions
 	(setq company-tooltip-align-annotations t)
-	(setq company-global-modes '(not markdown-mode org-mode)))
-      (use-package company-lsp)
+	(setq company-global-modes '(not markdown-mode org-mode))
+
+	(use-package company-lsp))
 
       (use-package diff-hl
 	:commands diff-hl
@@ -221,12 +243,11 @@ an attempt to get it documented and in one place.
 	(setq edit-server-new-frame nil))
 
       (use-package expand-region
+	:quelpa (org-ql :fetcher github :repo "magnars/expand-region.el")
 	:bind
 	(:map my-keys-mode-map
 	      ("C-=" . er/expand-region)
 	      ("C-+" . er/contract-region)))
-
-      (use-package flycheck)
 
       (use-package flyspell
 	:hook (prog-mode . flyspell-prog-mode))
@@ -242,16 +263,26 @@ an attempt to get it documented and in one place.
       (use-package go-mode
 	:mode "\\.go\\'"
 	:hook
-	(go-mode . flycheck-mode)
 	(go-mode . lsp-deferred)
-	(before-save . gofmt-before-save)
+	(before-save . lsp-format-buffer)
+	(before-save . lsp-organize-imports)
+
 	:config
-	(setq gofmt-command "goimports")
+
 	(use-package flycheck-gometalinter
 	  :config
-	  (setq flycheck-gometalinter-fast t)
+	  (setq flycheck-gometalinter-vendor t)    ;; only show errors
 	  (setq flycheck-gometalinter-tests t)
+
 	  (flycheck-gometalinter-setup))
+
+	(setq lsp-ui-doc-enable nil
+	      lsp-ui-peek-enable t
+	      lsp-ui-sideline-enable t
+	      lsp-ui-imenu-enable t
+	      ;; lsp-ui-flycheck-enable t
+	      )
+
 	(use-package go-rename)
 	(use-package gotest)
 	(use-package golint)
@@ -283,12 +314,35 @@ an attempt to get it documented and in one place.
 
 	;; toggling unfortunately breaks org-bullets
 	(defun org-bullets-fix-font ()
-	  (set-cursor-color "#77bdbf")
 	  (if org-bullets-mode
 	      (let ((foreground (org-find-invisible-foreground)))
 		(when foreground
 		  (set-face-foreground 'org-hide foreground)))))
 	(advice-add 'heaven-and-hell-toggle-theme :after #'org-bullets-fix-font))
+
+      ;; https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/
+      ;; (use-package ivy :ensure t
+      ;;   :diminish (ivy-mode . "")
+      ;;   :bind
+      ;;   (:map ivy-mode-map
+      ;; 	("C-'" . ivy-avy))
+      ;;   :config
+      ;;
+      ;;   ;; include counsel for counsel-M-x
+      ;;
+      ;;   (ivy-mode 1)
+      ;;   ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
+      ;;   (setq ivy-use-virtual-buffers t)
+      ;;   ;; number of result lines to display
+      ;;   (setq ivy-height 10)
+      ;;   ;; does not count candidates
+      ;;   (setq ivy-count-format "")
+      ;;   ;; no regexp by default
+      ;;   (setq ivy-initial-inputs-alist nil)
+      ;;   ;; configure regexp engine.
+      ;;   (setq ivy-re-builders-alist
+      ;; 	;; allow input not in order
+      ;;         '((t   . ivy--regex-ignore-order))))
 
       (use-package helm
 	:config
@@ -313,9 +367,12 @@ an attempt to get it documented and in one place.
 
       (use-package lsp-mode)
       (use-package lsp-ui
+	;; :ensure t
+	;; :commands lsp-ui-mode
 	:config
-	(setq lsp-ui-doc-delay .5)
-	(setq lsp-ui-doc-position "Bottom"))
+	;; (setq lsp-ui-doc-delay .5)
+	;; (setq lsp-ui-doc-position "Bottom")
+	)
 
       (use-package magit
 	:bind (:map my-keys-mode-map
@@ -358,10 +415,23 @@ an attempt to get it documented and in one place.
 	(setq org-tag-alist '((:startgrouptag)
 			      ("work" . ?w)
 			      (:grouptags)
-			      ("github" . ?g)
 			      ("meeting" . ?t)
+			      ("pairing")
+			      ("github" . ?g)
 			      (:endgrouptag)
+			      (:startgrouptag)
+			      ("github" . ?g)
+			      (:grouptags)
+			      ("byron")
+			      ("tim")
+			      ("aaron")
+			      ("sven")
+			      ("steve")
+			      ("todd")
+			      (:endgrouptag)
+
 			      ("health" . ?h)
+
 			      (:startgrouptag)
 			      ("family" . ?f)
 			      (:grouptags)
@@ -369,21 +439,23 @@ an attempt to get it documented and in one place.
 			      ("dad" . ?d)
 			      ("zach" . ?z)
 			      (:endgrouptag)
+
 			      ("personal" . ?p)
 			      ("es" . ?s)
 			      ("readme" . ?r)
 			      ("email" . ?e)
+
 			      (:startgrouptag)
 			      ("essays")
 			      (:grouptags)
 			      ("health")
 			      ("life")
 			      ("learning")
-			      ("technology")
 			      ("random")
 			      ("golang")
 			      ("identity")
 			      ("programming")
+			      ("errors")
 			      (:endgrouptag)))
 
 	(use-package org-ref)
@@ -398,6 +470,10 @@ an attempt to get it documented and in one place.
 
 	(setq org-super-agenda-groups
 	      '((:auto-group t)
+		(:name "Work Overdue"
+		       :and (:tag "work" :scheduled past)
+		       :and (:tag "work" :deadline past))
+
 		(:name "Scheduled"	  ; Optionally specify section name
 		       :time-grid t	  ; Items that appear on the time grid
 		       :scheduled today
@@ -405,10 +481,6 @@ an attempt to get it documented and in one place.
 
 		(:name "Started"
 		       :and (:todo ("WAITING" "IN PROGRESS")))
-
-		(:name "Work Overdue"
-		       :and (:tag "work" :scheduled past)
-		       :and (:tag "work" :deadline past))
 
 		(:name "Other Overdue"
 		       :scheduled past
@@ -450,39 +522,45 @@ an attempt to get it documented and in one place.
 	      '(;; capture template for adding books to reading list - they
 		;; can be re-filed appropriately with C-c C-w
 		;;
-		;;   ** Title
-		;;      [2020-06-06]
+		;;   * Title
+		;;     [2020-06-06]
 		;;
-		;;      Some Author
+		;;     Some Author
 		("b" "Book" entry (file+headline "books.org" "Inbox")
-		 "* TODO %^{TITLE}\n  %U\n\n  %^{AUTHOR}" :prepend t)
+		 "* %^{title}\n  %U\n\n  %^{author}%?\n" :prepend t :empty-lines 1)
 
 		;; articles - we don't add the date as a property because it's not as important here
 		;;
-		;;   * QUEUED [[link][Article Title]]
-		;;     [2020-16-24]
+		;;   * QUEUED Article Title
+		;;     SCHEDULED: <2020-08-16 Sun>
+		;;     [2020-06-24]
+		;;
+		;;     article-link
 		("a" "Article" entry (file "articles.org")
-		 "* QUEUED %^{TITLE}\n  SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)\n  %U\n  %^{LINK}%?" :prepend t)
+		 "* QUEUED %^{title}\n  SCHEDULED: %t\n  %U\n\n %^{link}%?\n"
+		 :prepend t :empty-lines 1)
 
 		;; just uncategorized things to go into inbox
 		;;
 		;;   * the thing
 		;;     [2020-06-24]
 		("i" "Inbox" entry (file "inbox.org")
-		 "* %^{ITEM}\n  %U%?" :prepend t)
+		 "* %^{item}\n  %U%?\n" :prepend t)
 
 		;; capture project ideas
 		;;
 		;; ** the project idea
 		;;    [2020-06-79]
 		("p" "Project" entry (file+headline "projects.org" "Ideas")
-		 "* %^{PROJECT}\n  %U%?" :prepend t)
+		 "* %^{project}\n  %U%?\n" :prepend t :empty-lines 1)
 
 		;; quotes!
 		;; * the quote
 		;;   [2020-04-11]
+		;;
+		;;   Who
 		("q" "Quote" entry (file "quotes.org")
-		 "* %^{QUOTE}\n  %U\n\n  %^{WHO}%?" :prepend t)
+		 "* %^{quote}\n  %U\n\n  %^{who}%?\n" :prepend t :empty-lines 1)
 
 		;; vocabulary words
 		;;
@@ -490,49 +568,62 @@ an attempt to get it documented and in one place.
 		;;   [2020-04-30]
 		;;   definition
 		("v" "Vocab" entry (file "vocab.org")
-		 "* %^{Word}\n  %U\n  %^{DEF}%?")
+		 "* %^{word}\n  %U\n  %^{definition}%?\n")
 
 		;; for new supplements to evaluate
-		;; ** supplement
-		;;    [2020-01-11]
+		;; * supplement
+		;;   [2020-01-11]
 		("s" "Supplement" entry (file+headline "supplements.org" "Inbox")
-		 "* %^{SUPP}\n  %U")
+		 "* %^{supplement}\n  %U%?\n")
 
-		;; new work meetings
+		;; new meetings
 		("c" "Calendar")
 
-		("cg" "GitHub Meeting")
-		("cgr" "recurring" entry (file+olp "github.org" "Meetings" "Recurring")
-		 "* %^{MEETING}\n SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}\n"
-		 :prepend t)
-		("cgo" "one off" entry (file+olp "github.org" "Meetings" "One Offs")
-		 "* %^{MEETING}\n SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n%^{ZOOM}\n"
-		 :prepend t)
+		("cw" "Work Meeting")
+		("cwr" "recurring" entry (file+olp "github.org" "Meetings" "Recurring")
+		 "* %^{meeting}\n  SCHEDULED: %^t\n  [[%^{zoom link}][zoom]]\n"
+		 :prepend t :empty-lines 1)
+		("cwo" "one off" entry (file+olp "github.org" "Meetings" "One Offs")
+		 "* %^{meeting}\n  SCHEDULED: %^t\n  [[%^{zoom link}][zoom]]\n\n** TODO Agenda\n\n** TODO Notes\n"
+		 :prepend t :empty-lines 1)
 
 		("cp" "Personal Event")
 		("cpr" "recurring" entry (file+olp "me.org" "Calendar" "Recurring")
-		 "* %^{MEETING}\n SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)%?\n"
-		 :prepend t)
+		 "* %^{meeting}\n SCHEDULED: %^t\n"
+		 :prepend t :empty-lines 1)
 		("cpo" "one off" entry (file+olp "me.org" "Calendar" "One Offs")
-		 "* %^{MEETING}\n SCHEDULED: %(org-insert-time-stamp nil t nil nil nil nil)\n%?"
-		 :prepend t)
+		 "* %^{meeting}\n SCHEDULED: %^t\n"
+		 :prepend t :empty-lines 1)
+
+		("w" "Work")
+		("wt" "TODO" entry (file+headline "github.org" "TODOs")
+		 "* TODO %^{task}\n  SCHEDULED: %t\n  %U%?\n"
+		 :prepend t :empty-lines 1)
+		("wn" "Note" entry (file+olp "github.org" "Notes")
+		 "* %^{item}\n  %U\n\n%?\n" :prepend t :empty-lines 1)
 
 		;; essay ideas
 		("e" "Essay Idea" entry (file+headline "essays.org" "Ideas")
-		 "* %^{IDEA}\n  %U%?" :prepend t)
+		 "* %^{idea}\n  %U%?\n" :prepend t :empty-lines 1)
 
-		("d" "Dailies" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
-		 "* %?" :prepend t)
+		("d" "Dailies")
+		("dw" "Work Dailies" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
+		 "* %?")
+		("da" "Work Pairing" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{problem} %^g\n%?\n" :empty-lines 1)
+
+		("dp" "Personal Dailies" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
+		 "* %?\n" :empty-lines 1)
 
 		;; for org-capture-extension ;; TODO
 
-		("p" "Protocol" entry (file+headline "inbox.org" "Inbox")
-		 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?")
-
-		("L" "Protocol Link" entry (file+headline "inbox.org" "Inbox")
-		 "* %? [[%:link][%:description]] \nCaptured On: %U")))
+		("L" "Protocol Link" entry (file "inbox.org")
+		 "* %^{description}\n  %U\n\n  %^{link}\n" :prepend t :empty-lines 1)))
 
 	(require 'org-tempo)
+
+	;; TODO
+	;; (use-package calfw-org)
 
 	(use-package org-pomodoro
 	  :config
@@ -788,6 +879,12 @@ an attempt to get it documented and in one place.
 	(lambda () (interactive)
 	  (my-chrome "https://github.com/notifications" t)))
 
+      ;; open project board for packages
+      (define-key m (kbd "C-c . a")
+	(lambda () (interactive)
+	  (my-chrome "https://dev.azure.com/githubpackages/Packages/_boards/board/t/Tim-Team/Stories" t)))
+
+
       m)
 
     ;; for directed buffer navigation
@@ -808,12 +905,14 @@ an attempt to get it documented and in one place.
       (define-key m (kbd "l") 'display-line-numbers-mode)
       (define-key m (kbd "e") 'electric-pair-mode)
       (define-key m (kbd "f") 'flymake-mode)
+      (define-key m (kbd "k") 'flycheck-mode)
       (define-key m (kbd "p") 'paredit-mode)
       (define-key m (kbd "o") 'outline-minor-mode)
       (define-key m (kbd "d") 'diff-hl-mode)
       (define-key m (kbd "h") 'global-hl-line-mode)
       (define-key m (kbd "r") 'perfect-margin-mode)
       (define-key m (kbd "a") 'auto-complete-mode)
+      (define-key m (kbd "j") 'treemacs)
       (define-key m (kbd "t") 'toggle-truncate-lines))
 
     ;; minor mode for navigating text easily
@@ -835,7 +934,7 @@ an attempt to get it documented and in one place.
 	(define-key m (kbd "a") 'beginning-of-line)
 	(define-key m (kbd "e") 'end-of-line)
 	(define-key m (kbd "g") 'goto-line)
-	(define-key m (kbd "G") 'ace-jump-mode)
+	(define-key m (kbd "m") 'ace-jump-mode)
 	(define-key m (kbd "S") 'isearch-backward)
 	(define-key m (kbd "s") 'isearch-forward)
 	m)

@@ -1,5 +1,7 @@
 [user]
 	useConfigOnly = true
+	name = Ricky Medina
+	email = ricky.medina91@gmail.com
 [alias]
 	unstage = reset HEAD --
 	st = status
@@ -32,3 +34,11 @@
 	gpgsign = true
 [gpg]
 	program = gpg
+[pull]
+	rebase = true
+[github]
+	user = r-medina
+[push]
+	default = simple
+[credential]
+	helper = osxkeychain

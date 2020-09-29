@@ -29,6 +29,7 @@
 
  (deftheme Greymatters-light)
  (let ((class '((class color) (min-colors 89)))
+       (cursor-bg "#77bdbf")
        (faded-fg "#737373")
        (more-faded-fg "#808080")
        (subtle-bg "#dbdbdb")
@@ -70,7 +71,7 @@
         `(highlight ((,class (:foreground ,fg3 :background ,bg3))))
 	`(hl-line ((,class (:background  ,bg2))))
 	`(fringe ((,class (:background ,bg2 :foreground ,fg4))))
-	`(cursor ((,class (:background ,bg3))))
+	`(cursor ((,class (:background ,cursor-bg :foreground ,more-faded-fg))))
         `(show-paren-match-face ((,class (:background ,warning))))
         `(isearch ((,class (:bold t :foreground ,warning :background ,bg3))))
         `(mode-line ((,class (:box (:line-width 1 :color nil) :bold t :foreground ,fg4 :background ,bg2))))

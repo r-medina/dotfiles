@@ -87,6 +87,9 @@ plugins=(
     osx
     zsh-autosuggestions
     zsh-completions
+
+    # work
+    registry
 )
 autoload -U compinit && compinit
 
