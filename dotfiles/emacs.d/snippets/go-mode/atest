@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: start test with assertion
+# key: atest
+# --
+func Test${Name}(t *testing.T) {
+	assert := assert.New(t)
+
+	$0
+}

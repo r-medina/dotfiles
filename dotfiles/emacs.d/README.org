@@ -454,6 +454,7 @@ an attempt to get it documented and in one place.
 			      ("random")
 			      ("golang")
 			      ("identity")
+			      ("technology")
 			      ("programming")
 			      ("errors")
 			      (:endgrouptag)))
@@ -652,6 +653,7 @@ an attempt to get it documented and in one place.
 		  'org-babel-load-languages '((shell . t))))
 
 	(use-package ox-hugo)
+	(use-package ox-gfm)
 	(use-package ox-pandoc)
 
 	(use-package ox-reveal

@@ -67,7 +67,7 @@
  '(org-agenda-files '("~/notes"))
  '(org-roam-server-mode t t)
  '(package-selected-packages
-   '(calfw-org calfw go-guru go-imports golint gotest go-rename flycheck-gometalinter yasnippet yaml-mode treemacs switch-window quelpa-use-package pullover protobuf-mode plantuml-mode perfect-margin pbcopy paredit ox-reveal ox-pandoc ox-hugo org-super-agenda org-roam-bibtex org-reverse-datetree org-ref org-ql org-pomodoro org-plus-contrib org-bullets ob-go lsp-ui json-mode helm-projectile helm-flyspell heaven-and-hell hcl-mode golden-ratio go-mode git-link forge expand-region edit-server dockerfile-mode diff-hl company-lsp bufler beacon auto-compile atomic-chrome ace-jump-mode))
+   '(ox-gfm calfw-org calfw go-guru go-imports golint gotest go-rename flycheck-gometalinter yasnippet yaml-mode treemacs switch-window quelpa-use-package pullover protobuf-mode plantuml-mode perfect-margin pbcopy paredit ox-reveal ox-pandoc ox-hugo org-super-agenda org-roam-bibtex org-reverse-datetree org-ref org-ql org-pomodoro org-plus-contrib org-bullets ob-go lsp-ui json-mode helm-projectile helm-flyspell heaven-and-hell hcl-mode golden-ratio go-mode git-link forge expand-region edit-server dockerfile-mode diff-hl company-lsp bufler beacon auto-compile atomic-chrome ace-jump-mode))
  '(perfect-margin-mode t)
  '(tramp-syntax 'simplified nil (tramp)))
 (custom-set-faces

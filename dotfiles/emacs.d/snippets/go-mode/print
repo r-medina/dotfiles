@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: pretty print thing
-# key: print
+# key: pprint
 # --
-fmt.Printf("$1: %+v\n", $1)
+fmt.Printf("$1: %+v\n", ${1:expression})

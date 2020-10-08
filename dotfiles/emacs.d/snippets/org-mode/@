@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: @
+# key: @
+# --
+[[https://github.com/$1][@${1:handle}]]

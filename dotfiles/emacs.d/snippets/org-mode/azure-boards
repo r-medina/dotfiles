@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Azure Boards
+# key: AB
+# --
+[[https://dev.azure.com/githubpackages/Packages/_boards/board/t/Tim-Team/Stories/?workitem=$1][AB#${1:ticket number}]]$0

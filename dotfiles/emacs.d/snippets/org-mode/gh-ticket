@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: github ticket
+# key: gh#
+# --
+[[https://github.com/$1/issues/$2][${1:org/repo}#${2:ticket number}]]$0

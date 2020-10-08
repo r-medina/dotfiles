@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: test equality
+# key: testeq2
+# --
+assert.Equal(${1:want}, ${2:got}, "${3:say something}")

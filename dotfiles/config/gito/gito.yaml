@@ -4,10 +4,9 @@ workspaces:
       aliases:
         cr: github.com/github/container-registry
         d: dotfiles
-        ghes: enterprise2
         nr: github.com/github/npm-registry
         rms: github.com/github/registry-metadata
       custom:
         dotfiles: /Users/ricky/.dotfiles
-        enterprise2: /Users/ricky/gh/enterprise2
+        ghes: /Users/ricky/gh/enterprise2
         gh: /Users/ricky/gh/github

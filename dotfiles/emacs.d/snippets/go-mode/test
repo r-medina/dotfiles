@@ -3,5 +3,5 @@
 # key: test
 # --
 func Test${Name}(t *testing.T) {
-  $0
+	$0
 }
