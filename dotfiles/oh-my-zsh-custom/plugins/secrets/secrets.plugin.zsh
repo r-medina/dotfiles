@@ -14,7 +14,7 @@ function registry-creds() {
 function get-gh-secret() {
     (( $# < 1 )) && { echo "Usage: get-gh-secret <which_secret>"; return }
     local which_secret=$1
-    
+
     (( ! oploggedin )) && opsignin
 
     op get item gh | jq -r ".details.sections[]?.fields[]? | select(.t==\"$which_secret\").v"
