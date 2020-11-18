@@ -182,6 +182,12 @@ an attempt to get it documented and in one place.
 	:config
 	(atomic-chrome-start-server))
 
+      (use-package auto-package-update
+	:config
+	(setq auto-package-update-delete-old-versions t)
+	(setq auto-package-update-hide-results t)
+	(auto-package-update-maybe))
+
       (use-package beacon
 	:commands (beacon-mode beacon-blink)
 	:config
@@ -243,7 +249,7 @@ an attempt to get it documented and in one place.
 	(setq edit-server-new-frame nil))
 
       (use-package expand-region
-	:quelpa (org-ql :fetcher github :repo "magnars/expand-region.el")
+	:quelpa (expand-region :fetcher github :repo "magnars/expand-region.el")
 	:bind
 	(:map my-keys-mode-map
 	      ("C-=" . er/expand-region)
@@ -412,6 +418,8 @@ an attempt to get it documented and in one place.
 
 	(setq org-ellipsis "↩")
 
+	(setq org-startup-folded t)
+
 	(setq org-tag-alist '((:startgrouptag)
 			      ("work" . ?w)
 			      (:grouptags)
@@ -428,6 +436,16 @@ an attempt to get it documented and in one place.
 			      ("sven")
 			      ("steve")
 			      ("todd")
+			      (:endgrouptag)
+
+			      ("onething" . ?o)
+			      (:grouptags)
+			      ("weekly")
+			      ("daily")
+			      ("monthly")
+			      ("year")
+			      ("5year")
+			      ("someday")
 			      (:endgrouptag)
 
 			      ("health" . ?h)
@@ -471,14 +489,19 @@ an attempt to get it documented and in one place.
 
 	(setq org-super-agenda-groups
 	      '((:auto-group t)
-		(:name "Work Overdue"
-		       :and (:tag "work" :scheduled past)
-		       :and (:tag "work" :deadline past))
+		(:name "One Thing - Weekly"
+		       :and (:tag "onething" :tag "weekly" :deadline future))
+		(:name "One Thing - Daily"
+		       :and (:tag "onething" :tag "daily"))
 
 		(:name "Scheduled"	  ; Optionally specify section name
 		       :time-grid t	  ; Items that appear on the time grid
-		       :scheduled today
-		       :deadline today)
+		       :and (:scheduled today :not (:todo "DONE"))
+		       :and (:deadline today :not (:todo "DONE")))
+
+		(:name "Work Overdue"
+		       :and (:tag "work" :scheduled past)
+		       :and (:tag "work" :deadline past))
 
 		(:name "Started"
 		       :and (:todo ("WAITING" "IN PROGRESS")))
@@ -538,7 +561,7 @@ an attempt to get it documented and in one place.
 		;;
 		;;     article-link
 		("a" "Article" entry (file "articles.org")
-		 "* QUEUED %^{title}\n  SCHEDULED: %t\n  %U\n\n %^{link}%?\n"
+		 "* QUEUED %^{title}\n  SCHEDULED: %t\n  %U\n\n  %^{link}%?\n"
 		 :prepend t :empty-lines 1)
 
 		;; just uncategorized things to go into inbox
@@ -547,6 +570,8 @@ an attempt to get it documented and in one place.
 		;;     [2020-06-24]
 		("i" "Inbox" entry (file "inbox.org")
 		 "* %^{item}\n  %U%?\n" :prepend t)
+		("t" "TODO" entry (file "inbox.org")
+		 "* TODO %^{todo}\n  SCHEDULED: %^t\n" :prepend t)
 
 		;; capture project ideas
 		;;
@@ -562,14 +587,6 @@ an attempt to get it documented and in one place.
 		;;   Who
 		("q" "Quote" entry (file "quotes.org")
 		 "* %^{quote}\n  %U\n\n  %^{who}%?\n" :prepend t :empty-lines 1)
-
-		;; vocabulary words
-		;;
-		;; * word
-		;;   [2020-04-30]
-		;;   definition
-		("v" "Vocab" entry (file "vocab.org")
-		 "* %^{word}\n  %U\n  %^{definition}%?\n")
 
 		;; for new supplements to evaluate
 		;; * supplement
@@ -587,13 +604,16 @@ an attempt to get it documented and in one place.
 		("cwo" "one off" entry (file+olp "github.org" "Meetings" "One Offs")
 		 "* %^{meeting}\n  SCHEDULED: %^t\n  [[%^{zoom link}][zoom]]\n\n** TODO Agenda\n\n** TODO Notes\n"
 		 :prepend t :empty-lines 1)
+		("cwb" "block off time" entry (file+olp "github.org" "Meetings" "One Offs")
+		 "* %^{task}\n  SCHEDULED: %^t\n"
+		 :prepend t :empty-lines 1)
 
 		("cp" "Personal Event")
 		("cpr" "recurring" entry (file+olp "me.org" "Calendar" "Recurring")
-		 "* %^{meeting}\n SCHEDULED: %^t\n"
+		 "* %^{meeting}\n  SCHEDULED: %^t\n"
 		 :prepend t :empty-lines 1)
 		("cpo" "one off" entry (file+olp "me.org" "Calendar" "One Offs")
-		 "* %^{meeting}\n SCHEDULED: %^t\n"
+		 "* %^{meeting}\n  SCHEDULED: %^t\n"
 		 :prepend t :empty-lines 1)
 
 		("w" "Work")
@@ -609,12 +629,40 @@ an attempt to get it documented and in one place.
 
 		("d" "Dailies")
 		("dw" "Work Dailies" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
-		 "* %?")
+		 "* %?\n  %T\n")
 		("da" "Work Pairing" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
-		 "* %^{problem} %^g\n%?\n" :empty-lines 1)
+		 "* %^{problem} %^g\n  %T\n  %?\n" :empty-lines 1)
 
 		("dp" "Personal Dailies" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
-		 "* %?\n" :empty-lines 1)
+		 "* %?\n  %T\n" :empty-lines 1)
+
+		;;; one thing
+
+		("o" "One Thing")
+
+		("op" "Personal")
+		("opd" "Daily" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{task} :onething:daily:\n  %t\n"
+		 :prepend t :empty-lines 1)
+		("opw" "Weekly" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{task} :onething:weekly:\n  DEADLINE: <%(org-read-date nil nil \"sun\") Sun>\n  %U%?\n"
+		 :prepend t :empty-lines 1)
+		("opm" "Monthly" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{task} :onething:monthly:\n  DEADLINE: %t\n  %U%?\n"
+		 :prepend t :empty-lines 1)
+
+		("ow" "Work")
+		("owd" "Daily" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{task} :onething:daily:\n  %t\n"
+		 :prepend t :empty-lines 1)
+		("oww" "Weekly" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{task} :onething:weekly:\n  DEADLINE: <%(org-read-date nil nil \"fri\") Fri>\n  %U%?\n"
+		 :prepend t :empty-lines 1)
+		("owm" "Monthly" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{task} :onething:monthly:\n  DEADLINE: %t\n  %U%?\n"
+		 :prepend t :empty-lines 1)
+
+		      ;;; \end one thing
 
 		;; for org-capture-extension ;; TODO
 

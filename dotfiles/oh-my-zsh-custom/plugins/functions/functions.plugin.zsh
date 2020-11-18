@@ -40,3 +40,7 @@ function vc() {
 
     osascript -e "tell application \"Viscosity\" to connect \"$vpn\""
 }
+
+function dgrep () {
+    grep -HIrsn --exclude-dir=.git $1 .
+}

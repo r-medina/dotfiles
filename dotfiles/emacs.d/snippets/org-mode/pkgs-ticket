@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: c2c-package-registry ticket
+# key: p#
+# --
+[[https://github.com/github/$1/issues/$2][github/c2c-package-registry#${1:ticket number}]]$0

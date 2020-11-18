@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: zoom
-# key: zoom
+# key: z
 # --
 [[$1][zoom]]$0

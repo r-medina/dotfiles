@@ -19,3 +19,10 @@ function get-gh-secret() {
 
     op get item gh | jq -r ".details.sections[]?.fields[]? | select(.t==\"$which_secret\").v"
 }
+
+function spotify-app-creds() {
+    (( ! oploggedin )) && opsignin
+
+    export SPOTIFY_ID=$(op get item spotify | jq -r ".details.sections[]?.fields[]? | select(.t==\"id\").v")
+    export SPOTIFY_SECRET=$(op get item spotify | jq -r ".details.sections[]?.fields[]? | select(.t==\"secret\").v")
+}

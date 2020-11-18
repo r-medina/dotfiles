@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: repo
+# key: r
+# --
+[[https://github.com/$1][${1:org/repo}]]$0

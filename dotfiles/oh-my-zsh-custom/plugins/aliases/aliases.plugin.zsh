@@ -2,7 +2,6 @@
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-alias dgrep='grep -HIrsn --exclude-dir=.git'
 
 # some more ls aliases
 alias ll='ls -alF'
