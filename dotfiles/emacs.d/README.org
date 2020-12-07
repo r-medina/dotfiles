@@ -411,6 +411,8 @@ an attempt to get it documented and in one place.
 
 	:config
 
+	(setq org-image-actual-width 500)
+
 	(set-time-zone-rule "/usr/share/zoneinfo/America/New_York")
 
 	(setq org-directory "~/notes")
@@ -509,6 +511,9 @@ an attempt to get it documented and in one place.
 		(:name "Other Overdue"
 		       :scheduled past
 		       :deadline past)
+
+		(:name "Upcoming"
+		       :deadline future)
 
 		(:name "Reading"
 		       :todo ("QUEUED" "READING" "NOTES"))))
@@ -642,7 +647,7 @@ an attempt to get it documented and in one place.
 
 		("op" "Personal")
 		("opd" "Daily" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
-		 "* %^{task} :onething:daily:\n  %t\n"
+		 "* %^{task} :onething:daily:\n  DEADLINE: %t\n"
 		 :prepend t :empty-lines 1)
 		("opw" "Weekly" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
 		 "* %^{task} :onething:weekly:\n  DEADLINE: <%(org-read-date nil nil \"sun\") Sun>\n  %U%?\n"
@@ -653,7 +658,7 @@ an attempt to get it documented and in one place.
 
 		("ow" "Work")
 		("owd" "Daily" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
-		 "* %^{task} :onething:daily:\n  %t\n"
+		 "* %^{task} :onething:daily:\n  DEADLINE: %t\n"
 		 :prepend t :empty-lines 1)
 		("oww" "Weekly" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
 		 "* %^{task} :onething:weekly:\n  DEADLINE: <%(org-read-date nil nil \"fri\") Fri>\n  %U%?\n"
@@ -663,6 +668,11 @@ an attempt to get it documented and in one place.
 		 :prepend t :empty-lines 1)
 
 		      ;;; \end one thing
+
+
+		("j" "Joke Idea" entry (file+headline "jokes.org" "Ideas")
+		 "* %^{joke}\n  %U\n  %?\n"
+		 :prepend t :empty-lines 1)
 
 		;; for org-capture-extension ;; TODO
 
