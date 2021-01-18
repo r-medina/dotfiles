@@ -4,10 +4,11 @@ workspaces:
       aliases:
         cr: github.com/github/container-registry
         d: dotfiles
-        nr: github.com/github/npm-registry
-        rms: github.com/github/registry-metadata
         dotcom: gh
+        nr: github.com/github/npm-registry
+        p: c2c-package-registry
+        rms: github.com/github/registry-metadata
       custom:
         dotfiles: /Users/ricky/.dotfiles
-        ghes: /Users/ricky/gh/enterprise2
         gh: /Users/ricky/gh/github
+        ghes: /Users/ricky/gh/enterprise2

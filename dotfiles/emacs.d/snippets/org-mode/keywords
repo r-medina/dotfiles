@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: keywords
+# key: :k
+# --
+:KEYWORDS: $1$0

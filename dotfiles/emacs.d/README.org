@@ -20,7 +20,7 @@ an attempt to get it documented and in one place.
   =~/.dotfiles=):
 
   #+begin_src shell :noeval :tangle no
-  ./dotdrop.sh --profile=home import ~/.emacs.d/
+    ./dotdrop.sh --profile=home import ~/.emacs.d/
   #+end_src
 
 
@@ -60,10 +60,11 @@ an attempt to get it documented and in one place.
      (setq winner-mode t)
    #+end_src
 
-   Fixes =dired= issue on startup
+   Fixes =dired= issue on startup (no longer needed for some reasion)
+   [2020-12-15 Tue]
    #+begin_src emacs-lisp
-     (if (eq system-type 'darwin)
-	 (setq insert-directory-program "gls" dired-use-ls-dired t))
+     ;; (if (eq system-type 'darwin)
+     ;;     (setq insert-directory-program "gls" dired-use-ls-dired t))
    #+end_src
 
    So coding system works consistently in terminal (I don't remember
@@ -81,7 +82,7 @@ an attempt to get it documented and in one place.
 
    Getting rid of annoying bell:
    #+begin_src emacs-lisp
-   (setq ring-bell-function #'ignore)
+     (setq ring-bell-function #'ignore)
    #+end_src
 
    Reloads a file if saved elsewhere ([[https://www.gnu.org/software/emacs/manual/html_node/emacs/Reverting.html][docs]]):
@@ -89,6 +90,10 @@ an attempt to get it documented and in one place.
      (global-auto-revert-mode t)
    #+end_src
 
+   #+begin_src emacs-lisp
+     (global-visual-line-mode t)
+   #+end_src
+   
    Function for basic cleaning of buffer:
    #+begin_src emacs-lisp
      (defun my-clean ()
@@ -147,6 +152,17 @@ an attempt to get it documented and in one place.
 			     (format "url: " prompt) prompt))
 			(read-string "url: ")) work))))
    #+end_src
+
+   Putting entire paragraph on one line
+   # https://emacs.stackexchange.com/questions/2606/opposite-of-fill-paragraph#:~:text=6%20Answers&text=Quoting%20from%20Emacs%20Wiki%2C%20by,is%20the%20contrary%20of%20FillParagraph.
+   #+begin_src emacs-lisp
+     (defun unfill-paragraph ()
+       "Takes a multi-line paragraph and makes it into a single line of text."
+       (interactive)
+       (let ((fill-column (point-max)))
+	 (fill-paragraph nil)))
+   #+end_src
+
 
 ** my-keys-mode-map setup
 
@@ -319,11 +335,14 @@ an attempt to get it documented and in one place.
 	(setq heaven-and-hell-load-theme-no-confirm t)
 
 	;; toggling unfortunately breaks org-bullets
+	;; TODO: finish fixing
 	(defun org-bullets-fix-font ()
-	  (if org-bullets-mode
-	      (let ((foreground (org-find-invisible-foreground)))
-		(when foreground
-		  (set-face-foreground 'org-hide foreground)))))
+	  (mapcar (if org-bullets-mode
+		      (let ((foreground (org-find-invisible-foreground)))
+			(when foreground
+			  (set-face-foreground 'org-hide foreground))))
+		  (buffer-list)))
+
 	(advice-add 'heaven-and-hell-toggle-theme :after #'org-bullets-fix-font))
 
       ;; https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/
@@ -406,7 +425,6 @@ an attempt to get it documented and in one place.
 	       ("M-<right>" . nil)
 	       ("M-S-<right>" . org-metaright)
 	       ("M-C-S-<right>" . org-shiftmetaright)
-	       ("C-j" . nil)
 	       ("C-c C-." . org-time-stamp))
 
 	:config
@@ -496,10 +514,12 @@ an attempt to get it documented and in one place.
 		(:name "One Thing - Daily"
 		       :and (:tag "onething" :tag "daily"))
 
-		(:name "Scheduled"	  ; Optionally specify section name
-		       :time-grid t	  ; Items that appear on the time grid
-		       :and (:scheduled today :not (:todo "DONE"))
-		       :and (:deadline today :not (:todo "DONE")))
+		(:name "Scheduled"
+		       :time-grid t
+		       :and (:scheduled today :deadline today :not (:todo ("DONE" "SKIP" "NOPE"))))
+
+		(:name "Other Scheduled"
+		       :scheduled today :deadline today)
 
 		(:name "Work Overdue"
 		       :and (:tag "work" :scheduled past)
@@ -514,6 +534,11 @@ an attempt to get it documented and in one place.
 
 		(:name "Upcoming"
 		       :deadline future)
+
+		;; (:name "This Week"
+		;; 	 :deadline (before (format-time-string
+		;; 			    "%Y-%m-%d"
+		;; 			    (org-time-string-to-time (org-read-date nil nil "sun")))))
 
 		(:name "Reading"
 		       :todo ("QUEUED" "READING" "NOTES"))))
@@ -609,9 +634,6 @@ an attempt to get it documented and in one place.
 		("cwo" "one off" entry (file+olp "github.org" "Meetings" "One Offs")
 		 "* %^{meeting}\n  SCHEDULED: %^t\n  [[%^{zoom link}][zoom]]\n\n** TODO Agenda\n\n** TODO Notes\n"
 		 :prepend t :empty-lines 1)
-		("cwb" "block off time" entry (file+olp "github.org" "Meetings" "One Offs")
-		 "* %^{task}\n  SCHEDULED: %^t\n"
-		 :prepend t :empty-lines 1)
 
 		("cp" "Personal Event")
 		("cpr" "recurring" entry (file+olp "me.org" "Calendar" "Recurring")
@@ -621,12 +643,18 @@ an attempt to get it documented and in one place.
 		 "* %^{meeting}\n  SCHEDULED: %^t\n"
 		 :prepend t :empty-lines 1)
 
+		("O" "One Off Calendar Event" entry (file+olp "me.org" "Calendar" "One Offs")
+		 "* %^{meeting}\n  SCHEDULED: %^t\n"
+		 :prepend t :empty-lines 1)
+	  
 		("w" "Work")
 		("wt" "TODO" entry (file+headline "github.org" "TODOs")
 		 "* TODO %^{task}\n  SCHEDULED: %t\n  %U%?\n"
 		 :prepend t :empty-lines 1)
 		("wn" "Note" entry (file+olp "github.org" "Notes")
 		 "* %^{item}\n  %U\n\n%?\n" :prepend t :empty-lines 1)
+		("wb" "block off time" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{task}\n  SCHEDULED: %^t\n")
 
 		;; essay ideas
 		("e" "Essay Idea" entry (file+headline "essays.org" "Ideas")
@@ -667,6 +695,11 @@ an attempt to get it documented and in one place.
 		 "* %^{task} :onething:monthly:\n  DEADLINE: %t\n  %U%?\n"
 		 :prepend t :empty-lines 1)
 
+		("D" "One Thing Work Daily" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
+		 "* %^{task} :onething:daily:\n  DEADLINE: %t\n"
+		 :prepend t :empty-lines 1)
+
+	  
 		      ;;; \end one thing
 
 
@@ -892,6 +925,8 @@ an attempt to get it documented and in one place.
     (global-unset-key (kbd "M-m"))
     (global-set-key (kbd "M-m m") 'my-keys-mode)
 
+    (global-set-key (kbd "M-Q") 'unfill-paragraph)
+
     (let ((m my-keys-mode-map))
       (define-key m (kbd "C-t") 'comment-or-uncomment-region)
       (define-key m (kbd "C-S-T") (lambda () (interactive) (org-agenda)))
@@ -970,9 +1005,11 @@ an attempt to get it documented and in one place.
       (define-key m (kbd "o") 'outline-minor-mode)
       (define-key m (kbd "d") 'diff-hl-mode)
       (define-key m (kbd "h") 'global-hl-line-mode)
-      (define-key m (kbd "r") 'perfect-margin-mode)
       (define-key m (kbd "a") 'auto-complete-mode)
       (define-key m (kbd "j") 'treemacs)
+      (define-key m (kbd "r") 'perfect-margin-mode)
+      (define-key m (kbd "v") 'visual-line-mode)
+      (define-key m (kbd "z") 'adaptive-wrap-prefix-mode)
       (define-key m (kbd "t") 'toggle-truncate-lines))
 
     ;; minor mode for navigating text easily

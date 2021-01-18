@@ -84,6 +84,7 @@ plugins=(
 
     docker
     git
+    kubectl
     osx
     zsh-autosuggestions
     zsh-completions
