@@ -90,10 +90,6 @@ an attempt to get it documented and in one place.
      (global-auto-revert-mode t)
    #+end_src
 
-   #+begin_src emacs-lisp
-     (global-visual-line-mode t)
-   #+end_src
-   
    Function for basic cleaning of buffer:
    #+begin_src emacs-lisp
      (defun my-clean ()
@@ -202,7 +198,8 @@ an attempt to get it documented and in one place.
 	:config
 	(setq auto-package-update-delete-old-versions t)
 	(setq auto-package-update-hide-results t)
-	(auto-package-update-maybe))
+	;;(auto-package-update-maybe)
+	)
 
       (use-package beacon
 	:commands (beacon-mode beacon-blink)
@@ -274,7 +271,7 @@ an attempt to get it documented and in one place.
       (use-package flyspell
 	:hook (prog-mode . flyspell-prog-mode))
 
-      (use-package forge)
+      ;; (use-package forge)
 
       (use-package git-link
 	:config
@@ -431,8 +428,8 @@ an attempt to get it documented and in one place.
 
 	(setq org-image-actual-width 500)
 
-	(set-time-zone-rule "/usr/share/zoneinfo/America/New_York")
-
+	;; (set-time-zone-rule "/usr/share/zoneinfo/America/New_York")
+  
 	(setq org-directory "~/notes")
 	(setq org-agenda-files '("~/notes"))
 
@@ -516,7 +513,8 @@ an attempt to get it documented and in one place.
 
 		(:name "Scheduled"
 		       :time-grid t
-		       :and (:scheduled today :deadline today :not (:todo ("DONE" "SKIP" "NOPE"))))
+
+		       :and (:scheduled today :deadline today :not (:todo ("DONE" "SKIP" "NOPE")))) ;; not working
 
 		(:name "Other Scheduled"
 		       :scheduled today :deadline today)
@@ -646,7 +644,7 @@ an attempt to get it documented and in one place.
 		("O" "One Off Calendar Event" entry (file+olp "me.org" "Calendar" "One Offs")
 		 "* %^{meeting}\n  SCHEDULED: %^t\n"
 		 :prepend t :empty-lines 1)
-	  
+
 		("w" "Work")
 		("wt" "TODO" entry (file+headline "github.org" "TODOs")
 		 "* TODO %^{task}\n  SCHEDULED: %t\n  %U%?\n"
@@ -669,7 +667,10 @@ an attempt to get it documented and in one place.
 		("dp" "Personal Dailies" entry (file+function "me.org" org-reverse-datetree-goto-date-in-file)
 		 "* %?\n  %T\n" :empty-lines 1)
 
-		;;; one thing
+		("W" "Work Dailies" entry (file+function "github.org" org-reverse-datetree-goto-date-in-file)
+		 "* %?\n  %T\n")
+
+		      ;;; one thing
 
 		("o" "One Thing")
 
@@ -699,8 +700,8 @@ an attempt to get it documented and in one place.
 		 "* %^{task} :onething:daily:\n  DEADLINE: %t\n"
 		 :prepend t :empty-lines 1)
 
-	  
-		      ;;; \end one thing
+
+			    ;;; \end one thing
 
 
 		("j" "Joke Idea" entry (file+headline "jokes.org" "Ideas")
@@ -807,7 +808,7 @@ an attempt to get it documented and in one place.
 
       (use-package protobuf-mode)
 
-      (use-package pullover)
+      ;; (use-package pullover)
 
       (use-package switch-window
 	:bind (:map my-keys-mode-map
@@ -887,8 +888,11 @@ an attempt to get it documented and in one place.
     (column-number-mode t)
     ;; so lines don't get broken onto next line if longer than buffer
     (set-default 'truncate-lines t)
+    ;; (adaptive-wrap-prefix-mode t)
+    ;; (global-visual-line-mode t)
 
-    ;; show matching parenthesis
+    ;; ;; show
+    matching parenthesis
     (show-paren-mode t)
 
     ;; fixing scrolling behavior to be less jumpy
@@ -1068,8 +1072,9 @@ an attempt to get it documented and in one place.
       :group 'elegance)
 
     ;; Font and frame size
-    (set-face-font 'default "Monaco Light 13")
-    (setq-default line-spacing 5)
+    ;; this needs to re-run for some reason
+    (set-face-font 'default "Monaco 13")
+    (setq-default line-spacing 6)
 
     ;; Underline line at descent position, not baseline position
     (setq x-underline-at-descent-line t)
@@ -1082,7 +1087,7 @@ an attempt to get it documented and in one place.
 
     (defun mode-line-render (left right)
       (let* ((available-width (- (window-width) (length left) )))
-	(format (format "%%s %%%ds" available-width) left right)))
+	(format (format " %%s %%%ds" available-width) left right)))
     (setq-default mode-line-format
 		  '((:eval
 		     (mode-line-render

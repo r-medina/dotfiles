@@ -7,3 +7,14 @@ gicd() {
 gpen() {
     open $(gito url $1)
 }
+
+gmk() {
+    local dirName=$1
+    local self=$(gito self)
+
+    cd $self
+
+    mkdir $dirName
+    cd $dirName
+    git init
+}

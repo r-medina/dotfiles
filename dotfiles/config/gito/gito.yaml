@@ -1,6 +1,7 @@
 workspaces:
     - name: default
       path: /Users/ricky
+      self: github.com/r-medina
       aliases:
         cr: github.com/github/container-registry
         d: dotfiles

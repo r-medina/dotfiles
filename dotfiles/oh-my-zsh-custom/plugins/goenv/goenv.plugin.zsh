@@ -1,6 +1,6 @@
 whence go > /dev/null || return
 
-GOPATH="/Users/ricky"
+export GOPATH="/Users/ricky"
 
 # we're only really concerned with a few go environment variables
 govars=(
