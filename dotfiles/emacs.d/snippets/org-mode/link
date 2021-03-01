@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: boring ol' link
-# key: l
+# key: L
 # --
 [[$1][link]]$0

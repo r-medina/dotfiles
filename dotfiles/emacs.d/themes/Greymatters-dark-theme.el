@@ -257,6 +257,7 @@
 	`(org-table ((,class (:background ,subtle-bg :foreground ,faded-fg))))
         `(org-block ((,class (:background ,subtle-bg :extend t))))
 	`(org-block-begin-line ((,class (:foreground ,more-faded-fg))))
+	`(secondary-selection ((,class (:background ,bg3))))
 	))
 
 ;;;###autoload
